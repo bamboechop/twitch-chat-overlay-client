@@ -53,7 +53,7 @@
 import { getEmoteAsUrl, parseEmotesInMessage } from 'tmi-utils';
 import { onMounted, ref } from "vue";
 import HeartSvg from '../assets/heart.svg?component';
-import { IMessage } from "../interfaces/index.interface";
+import { IMessage } from "../common/interfaces/index.interface";
 
   const props = defineProps<IMessage>();
 
@@ -101,7 +101,7 @@ import { IMessage } from "../interfaces/index.interface";
   $avatar-size: 42px;
   $emote-size: 28px;
 
-  $background-color: rgba(189, 190, 190, 0.8);
+  $background-color: #e1e1e1;
 
   .chat-message {
     background-color: $background-color;
@@ -186,15 +186,10 @@ import { IMessage } from "../interfaces/index.interface";
     }
 
     &__text {
-      align-items: center;
-      display: flex;
-      flex-wrap: wrap;
       font-size: 19px;
       letter-spacing: -.4px;
       line-height: 27px;
       text-align: left;
-      word-break: break-word;
-      white-space: pre-wrap;
     }
 
     &__timestamp {

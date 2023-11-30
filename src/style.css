@@ -13,52 +13,19 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
+  background-color: transparent;
   display: flex;
+  margin: 0;
   place-items: center;
   min-width: 480px;
   height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-#app {
+#chat {
   height: 100%;
-  max-width: 480px;
+  max-width: calc(480px + 62px + 10px + 13px); /* 480px chat message, 62px twitch button, 10px gap between message and button, 13px spacing to right edge */
   margin: 0 auto;
-  padding: 0 2rem;
   text-align: center;
 }
 

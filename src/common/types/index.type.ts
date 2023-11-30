@@ -1,0 +1,1 @@
+export type TTheme = 'cities-skylines-ii' | 'windows-95';
