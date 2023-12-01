@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import ChatMessage from "../ChatMessage.vue";
+// @ts-ignore
 import TwitchSvg from '../../assets/twitch.svg?component';
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import Loader from "../common/Loader.vue";
@@ -71,7 +72,8 @@ watch(props.messages, () => {
 </script>
 
 <style scoped lang="scss">
-$button-size: 62px;
+@import '../../styles/variables';
+
 $button-icon-size: 38px;
 
 .chat-messages {
@@ -104,10 +106,10 @@ $button-icon-size: 38px;
     background-color: rgba(0,0,0,.45);
     border-radius: 50%;
     display: flex;
-    height: $button-size;
+    height: $twitch-button-size;
     justify-content: center;
-    margin-bottom: 38px;
-    width: $button-size;
+    margin-bottom: $twitch-button-offset;
+    width: $twitch-button-size;
 
     svg {
       height: $button-icon-size;

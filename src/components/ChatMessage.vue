@@ -52,6 +52,7 @@
 <script lang="ts" setup>
 import { getEmoteAsUrl, parseEmotesInMessage } from 'tmi-utils';
 import { onMounted, ref } from "vue";
+// @ts-ignore
 import HeartSvg from '../assets/heart.svg?component';
 import { IMessage } from "../common/interfaces/index.interface";
 
@@ -98,10 +99,13 @@ import { IMessage } from "../common/interfaces/index.interface";
 </script>
 
 <style lang="scss" scoped>
-  $avatar-size: 42px;
-  $emote-size: 28px;
+  @import '../styles/variables';
 
+  $avatar-size: 42px;
   $background-color: #e1e1e1;
+  $emote-size: 28px;
+  $triangle-long-size: 30px;
+  $triangle-short-side: 20px;
 
   .chat-message {
     background-color: $background-color;
@@ -115,15 +119,14 @@ import { IMessage } from "../common/interfaces/index.interface";
     width: calc(450px - 14px - 14px); // desired width minus 2*padding
 
     &:last-of-type::before {
-      border-bottom: 20px solid transparent;
-      border-left: 30px solid $background-color;
-      border-top: 20px solid transparent;
+      border-bottom: $triangle-short-side solid transparent;
+      border-left: $triangle-long-size solid $background-color;
+      border-top: $triangle-short-side solid transparent;
+      bottom: calc($twitch-button-offset + calc(#{$triangle-short-side} / 2));
       content: '';
       position: absolute;
       height: 0;
-      right: -30px;
-      top: 50%;
-      transform: translateY(-50%);
+      right: -$triangle-long-size;
       width: 0;
     }
 
