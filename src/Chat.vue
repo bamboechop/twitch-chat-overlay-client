@@ -23,8 +23,13 @@ import { IMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interf
 import { ChatUserstate, client as tmiClient } from "tmi.js";
 
 const searchParams = new URLSearchParams(window.location.search);
-const channel = searchParams.get('channel') ?? 'bamboechop';
-const debug = !!searchParams.get('debug') ?? false;
+const broadcaster = {
+  id: searchParams.get('broadcaster_id') ?? '37084588',
+  name: searchParams.get('channel') ?? 'bamboechop',
+}
+const clientId = searchParams.get('clientid') ?? '332bgpg7ue15dq44gqpkvuophguqgw';
+const debug = !!searchParams.get('debug');
+const redirectUri = searchParams.get('redirect_uri') ?? 'http://localhost:5173';
 const theme: TTheme = searchParams.get('theme') as TTheme ?? 'windows-95';
 
 const loading = ref(true);
@@ -48,24 +53,19 @@ onMounted(async () => {
           window.localStorage.setItem('twitch-token', token);
         }
       } else {
-        window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=332bgpg7ue15dq44gqpkvuophguqgw&redirect_uri=http://localhost:5173&response_type=token&scope=`;
+        window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=`;
         return;
       }
     }
 
+    axios.defaults.headers.common = {
+      'Authorization': `Bearer ${token}`,
+      'Client-ID': clientId,
+    };
+
     const [chatBadgesResponse, globalChatBadgesResponse] = await Promise.all([
-      axios.get<ITwitchBadgeResponse>('https://api.twitch.tv/helix/chat/badges?broadcaster_id=37084588', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Client-Id': '332bgpg7ue15dq44gqpkvuophguqgw',
-        },
-      }),
-      axios.get<ITwitchBadgeResponse>('https://api.twitch.tv/helix/chat/badges/global',{
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Client-Id': '332bgpg7ue15dq44gqpkvuophguqgw',
-        },
-      }),
+      axios.get<ITwitchBadgeResponse>(`https://api.twitch.tv/helix/chat/badges?broadcaster_id=${broadcaster.id}`),
+      axios.get<ITwitchBadgeResponse>('https://api.twitch.tv/helix/chat/badges/global'),
     ]);
 
     const availableBadges: Record<string, { description: string; id: string; imageUrl: string; title: string }[]> = {};
@@ -81,7 +81,7 @@ onMounted(async () => {
       }
     }
 
-    const channels = [channel];
+    const channels = [broadcaster.name];
     if(debug) {
       channels.push('bambbot');
     }
@@ -118,25 +118,14 @@ onMounted(async () => {
 
       let userImage = storedImages?.[userId];
       if(!userImage) {
-        const response = await axios.get(`https://api.twitch.tv/helix/users?id=${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Client-Id': '332bgpg7ue15dq44gqpkvuophguqgw',
-          },
-        });
+        const response = await axios.get(`https://api.twitch.tv/helix/users?id=${userId}`);
         storedImages[userId] = response.data?.data?.[0]?.['profile_image_url'] ?? undefined;
         if(storedImages[userId]) {
           userImage = storedImages[userId];
           window.sessionStorage.setItem('user-avatars', JSON.stringify(storedImages));
         }
       }
-      const streamsResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_login=${channel}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Client-Id': '332bgpg7ue15dq44gqpkvuophguqgw',
-        },
-      });
-      console.log(streamsResponse.data.data);
+      const streamsResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_login=${broadcaster.name}`);
       messages.value.push({
         availableBadges,
         color,
