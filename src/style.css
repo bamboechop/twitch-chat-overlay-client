@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Windows-95';
+  src: url("/windows-95/font.woff2") format("woff2");
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,15 +16,34 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --background-color: salmon;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background-color: transparent;
-  display: flex;
+  background-color: var(--background-color);
+  height: 100vh;
   margin: 0;
+}
+
+[data-theme="cities-skylines-ii"] {
+  --background-color: transparent;
+
+  display: flex;
   place-items: center;
   min-width: 480px;
-  height: 100vh;
+}
+
+[data-theme="windows-95"] {
+  --background-color: #c3c3c3;
+
+  font-family: 'Windows-95', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1;
 }
 
 #chat {

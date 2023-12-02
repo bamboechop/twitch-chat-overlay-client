@@ -12,7 +12,7 @@
 </script>
 
 <style lang="scss">
-  #chat {
+  body[data-theme="cities-skylines-ii"] #chat {
     max-width: calc(480px + 62px + 10px + 13px); /* 480px chat message, 62px twitch button, 10px gap between message and button, 13px spacing to right edge */
   }
 </style>

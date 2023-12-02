@@ -2,13 +2,14 @@
   <div class="chat">
     <template v-if="theme === 'cities-skylines-ii'">
       <CitiesSkylinesIITheme
-          :loading="loading"
-          :messages="messages" />
+        :loading="loading"
+        :messages="messages" />
     </template>
     <template v-if="theme === 'windows-95'">
       <Windows95Theme
-          :loading="loading"
-        :messages="messages" />
+        :loading="loading"
+        :messages="messages"
+        :viewers="viewers" />
     </template>
   </div>
 </template>
@@ -34,6 +35,7 @@ const theme: TTheme = searchParams.get('theme') as TTheme ?? 'windows-95';
 
 const loading = ref(true);
 const messages = ref<IMessage[]>([]);
+const viewers = ref(0);
 
 onMounted(async () => {
   try {
@@ -57,6 +59,8 @@ onMounted(async () => {
         return;
       }
     }
+
+    document.body.dataset.theme = theme;
 
     axios.defaults.headers.common = {
       'Authorization': `Bearer ${token}`,
@@ -125,7 +129,7 @@ onMounted(async () => {
           window.sessionStorage.setItem('user-avatars', JSON.stringify(storedImages));
         }
       }
-      const streamsResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_login=${broadcaster.name}`);
+      const viewerCount = await getViewerCount();
       messages.value.push({
         availableBadges,
         color,
@@ -138,7 +142,7 @@ onMounted(async () => {
         userBadges,
         userImage: userImage ?? 'https://placekitten.com/35/35',
         userName,
-        viewerCount: streamsResponse.data?.data?.[0]?.['viewer_count'] ?? 0,
+        viewerCount,
       });
     });
 
@@ -146,7 +150,17 @@ onMounted(async () => {
   } catch(err) {
     console.error(err);
   }
+
+  window.setInterval(async () => {
+    await getViewerCount();
+  }, 1000 * 60);
 });
+
+async function getViewerCount(): Promise<number> {
+  const streamsResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_login=${broadcaster.name}`);
+  viewers.value = streamsResponse.data?.data?.[0]?.['viewer_count'] ?? 0;
+  return viewers.value;
+}
 </script>
 
 <style lang="scss" scoped>

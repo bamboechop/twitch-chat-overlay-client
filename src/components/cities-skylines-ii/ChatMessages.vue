@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
-import ChatMessage from "../ChatMessage.vue";
+import ChatMessage from "./ChatMessage.vue";
 // @ts-ignore
 import TwitchSvg from '../../assets/twitch.svg?component';
 import { IMessage } from "../../common/interfaces/index.interface.ts";
@@ -57,7 +57,7 @@ onMounted(async () => {
       }
 
       // set stale messages to be hidden
-      if(!message.timestamp || Date.now() - message.timestamp >= 700000000) {
+      if(!message.timestamp || Date.now() - message.timestamp >= 7000) {
         message.show = false;
       }
 
