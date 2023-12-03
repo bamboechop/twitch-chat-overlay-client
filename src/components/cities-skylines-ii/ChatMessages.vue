@@ -47,8 +47,6 @@ const props = defineProps<{ loading: boolean; messages: IMessage[]; }>();
 const messages = ref<IMessage[]>([]);
 
 onMounted(async () => {
-  document.scrollingElement?.scroll(0, 1);
-
   window.setInterval(async () => {
     messages.value = messages.value.map(message => {
       // remove already hidden messages

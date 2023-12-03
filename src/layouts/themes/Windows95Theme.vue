@@ -10,7 +10,3 @@
 
   defineProps<{ loading: boolean; messages: IMessage[]; viewers: number }>();
 </script>
-
-<style lang="scss" scoped>
-
-</style>

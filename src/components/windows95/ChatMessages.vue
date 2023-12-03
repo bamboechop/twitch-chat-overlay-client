@@ -19,14 +19,9 @@
 
 <script lang="ts" setup>
 import { IMessage } from "../../common/interfaces/index.interface.ts";
-import { onMounted } from "vue";
 import ChatMessage from "./ChatMessage.vue";
 
 defineProps<{ messages: IMessage[]; }>();
-
-onMounted(async () => {
-  document.scrollingElement?.scroll(0, 1);
-})
 </script>
 
 <style lang="scss" scoped>

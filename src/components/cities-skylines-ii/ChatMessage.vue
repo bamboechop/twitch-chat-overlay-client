@@ -50,11 +50,11 @@
 </template>
 
 <script lang="ts" setup>
-import { getEmoteAsUrl, parseEmotesInMessage } from 'tmi-utils';
-import { onMounted, ref } from "vue";
-// @ts-ignore
-import HeartSvg from '../../assets/heart.svg?component';
+  import { onMounted, ref } from "vue";
+  // @ts-ignore
+  import HeartSvg from '../../assets/heart.svg?component';
 import { IMessage } from "../../common/interfaces/index.interface.ts";
+  import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
 
   const props = defineProps<IMessage>();
 
@@ -66,26 +66,18 @@ import { IMessage } from "../../common/interfaces/index.interface.ts";
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
 
   onMounted(() => {
-    for(const messagePart of parseEmotesInMessage(props.emotes as Record<string, string[]>, props.text)) {
-      messageParts.value.push({
-        raw: messagePart.raw,
-        type: messagePart.type,
-        value: messagePart.type === 'emote' ? getEmoteAsUrl(messagePart.value) : messagePart.value,
-      });
+    if(props.emotes) {
+      messageParts.value = parseMessage(props.emotes, props.text);
     }
+
+    if(props.userBadges) {
+      userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
+    }
+
     const parsedTimestamp = new Date(props.timestamp ?? Date.now());
     let hours = parsedTimestamp.getHours();
     let minutes = parsedTimestamp.getMinutes();
     humanReadableTimestamp.value = `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-
-    if(props.userBadges) {
-      for(const [key, value] of Object.entries(props.userBadges)) {
-        const badge = props.availableBadges[key].find(badge => badge.id === value);
-        if(badge) {
-          userBadges.value.push(badge);
-        }
-      }
-    }
 
     const count = Math.floor(Math.random() * (props.viewerCount + 1));
     // noinspection TypeScriptValidateTypes - WebStorm seems to not be up2date for NumberFormat

@@ -37,29 +37,20 @@
 <script lang="ts" setup>
   import { IMessage } from "../../common/interfaces/index.interface.ts";
   import { onMounted, ref } from "vue";
-  import { getEmoteAsUrl, parseEmotesInMessage } from "tmi-utils";
+  import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
 
   const props = defineProps<Pick<IMessage, 'availableBadges' | 'displayName' | 'emotes' | 'text' | 'userBadges' | 'userName'>>();
 
-  const messageParts = ref<Record<string, any>[]>([]);
+  const messageParts = ref<Record<string, string | undefined>[]>([]);
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
 
   onMounted(() => {
-    for(const messagePart of parseEmotesInMessage(props.emotes as Record<string, string[]>, props.text)) {
-      messageParts.value.push({
-        raw: messagePart.raw,
-        type: messagePart.type,
-        value: messagePart.type === 'emote' ? getEmoteAsUrl(messagePart.value) : messagePart.value,
-      });
+    if(props.emotes) {
+      messageParts.value = parseMessage(props.emotes, props.text);
     }
 
     if(props.userBadges) {
-      for(const [key, value] of Object.entries(props.userBadges)) {
-        const badge = props.availableBadges[key].find(badge => badge.id === value);
-        if(badge) {
-          userBadges.value.push(badge);
-        }
-      }
+      userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
     }
   });
 </script>
