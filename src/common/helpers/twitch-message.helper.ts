@@ -1,9 +1,9 @@
 import { Badges } from "tmi.js";
 import { getEmoteAsUrl, parseEmotesInMessage } from "tmi-utils";
 
-export function parseMessage(emotes: { [emoteid: string]: string[]; }, text: string) {
+export function parseMessage(emotes: { [emoteid: string]: string[]; } | undefined, text: string) {
   const messageParts: Record<string, string | undefined>[] = [];
-  for(const messagePart of parseEmotesInMessage(emotes, text)) {
+  for(const messagePart of parseEmotesInMessage(emotes as Record<string, string[]>, text)) {
     messageParts.push({
       raw: messagePart.raw,
       type: messagePart.type,

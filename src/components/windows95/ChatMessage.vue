@@ -45,9 +45,7 @@
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
 
   onMounted(() => {
-    if(props.emotes) {
-      messageParts.value = parseMessage(props.emotes, props.text);
-    }
+    messageParts.value = parseMessage(props.emotes, props.text);
 
     if(props.userBadges) {
       userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);

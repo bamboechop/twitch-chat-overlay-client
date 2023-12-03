@@ -53,7 +53,7 @@
   import { onMounted, ref } from "vue";
   // @ts-ignore
   import HeartSvg from '../../assets/heart.svg?component';
-import { IMessage } from "../../common/interfaces/index.interface.ts";
+  import { IMessage } from "../../common/interfaces/index.interface.ts";
   import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
 
   const props = defineProps<IMessage>();
@@ -66,9 +66,7 @@ import { IMessage } from "../../common/interfaces/index.interface.ts";
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
 
   onMounted(() => {
-    if(props.emotes) {
-      messageParts.value = parseMessage(props.emotes, props.text);
-    }
+    messageParts.value = parseMessage(props.emotes, props.text);
 
     if(props.userBadges) {
       userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
@@ -94,7 +92,7 @@ import { IMessage } from "../../common/interfaces/index.interface.ts";
   @import '../../styles/variables';
 
   $avatar-size: 42px;
-  $background-color: #e1e1e1;
+  $background-color: rgba(225, 225, 225, 0.85);
   $emote-size: 28px;
   $triangle-long-size: 30px;
   $triangle-short-side: 20px;

@@ -55,7 +55,7 @@ onMounted(async () => {
       }
 
       // set stale messages to be hidden
-      if(!message.timestamp || Date.now() - message.timestamp >= 7000) {
+      if(!message.timestamp || Date.now() - message.timestamp >= 70000000) {
         message.show = false;
       }
 
@@ -101,7 +101,7 @@ $button-icon-size: 38px;
   &__twitch {
     align-items: center;
     align-self: end;
-    background-color: rgba(0,0,0,.45);
+    background-color: rgba(0,0,0,.6);
     border-radius: 50%;
     display: flex;
     height: $twitch-button-size;
