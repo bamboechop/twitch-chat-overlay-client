@@ -23,15 +23,16 @@ import axios from "axios";
 import { IMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
 import { ChatUserstate, client as tmiClient } from "tmi.js";
 
-const searchParams = new URLSearchParams(window.location.search);
 const broadcaster = {
-  id: searchParams.get('broadcaster_id') ?? '37084588',
-  name: searchParams.get('channel') ?? 'bamboechop',
+  id: import.meta.env.VITE_TWITCH_BROADCASTER_ID,
+  name: import.meta.env.VITE_TWITCH_BROADCASTER_NAME,
 }
-const clientId = searchParams.get('clientid') ?? '332bgpg7ue15dq44gqpkvuophguqgw';
+const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_TWITCH_REDIRECT_URI;
+
+const searchParams = new URLSearchParams(window.location.search);
 const debug = !!searchParams.get('debug');
-const redirectUri = searchParams.get('redirect_uri') ?? 'http://localhost:5173';
-const theme: TTheme = searchParams.get('theme') as TTheme ?? 'windows-95';
+const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 
 const loading = ref(true);
 const messages = ref<IMessage[]>([]);
@@ -87,7 +88,7 @@ onMounted(async () => {
 
     const channels = [broadcaster.name];
     if(debug) {
-      channels.push('bambbot');
+      channels.push(import.meta.env.VITE_TWITCH_DEBUG_CHANNEL);
     }
     const client = new tmiClient({
       channels,
