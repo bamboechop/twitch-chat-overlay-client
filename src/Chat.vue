@@ -7,7 +7,7 @@
     </template>
     <template v-if="theme === 'windows-95'">
       <Windows95Theme
-        :loading="loading"
+        :active="active"
         :messages="messages"
         :viewers="viewers" />
     </template>
@@ -31,6 +31,7 @@ const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
 const redirectUri = import.meta.env.VITE_TWITCH_REDIRECT_URI;
 
 const searchParams = new URLSearchParams(window.location.search);
+const active = !!searchParams.get('active');
 const debug = !!searchParams.get('debug');
 const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 

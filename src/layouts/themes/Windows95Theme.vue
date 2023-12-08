@@ -1,5 +1,6 @@
 <template>
   <ChatWindow
+      :active="active"
     :messages="messages"
     :viewers="viewers" />
 </template>
@@ -8,5 +9,5 @@
   import ChatWindow from "../../components/windows95/ChatWindow.vue";
   import { IMessage } from "../../common/interfaces/index.interface.ts";
 
-  defineProps<{ loading: boolean; messages: IMessage[]; viewers: number }>();
+  defineProps<{ active: boolean; messages: IMessage[]; viewers: number }>();
 </script>

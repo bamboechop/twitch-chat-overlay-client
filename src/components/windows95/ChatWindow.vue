@@ -1,6 +1,7 @@
 <template>
   <div class="chat-window">
     <ProgramTitleBar
+        :active="active"
         icon-path="/windows-95/chat.icon.png"
         title="Chat" />
     <ProgramButtonBar />
@@ -18,7 +19,7 @@ import ProgramBottomBar from "./ProgramBottomBar.vue";
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import ChatMessages from "./ChatMessages.vue";
 
-defineProps<{ messages: IMessage[]; viewers: number }>();
+defineProps<{ active: boolean; messages: IMessage[]; viewers: number }>();
 </script>
 
 <style lang="scss" scoped>
