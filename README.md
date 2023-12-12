@@ -7,6 +7,7 @@ This repository contains the Twitch Chat Overlay Client for OBS which will be us
   * [How does this project work?](#how-does-this-project-work)
     * [Setting the defaults](#setting-the-defaults)
     * [Overriding defaults "at runtime"](#overriding-defaults-at-runtime)
+    * [Configuring SSL for localhost](#configuring-ssl-for-localhost)
 
 ## Why this project?
 
@@ -32,3 +33,11 @@ To not always be forced to edit the `.env` file whenever you want to change some
 * `debug` - can be set to `true` if you want to connect to an additional twitch channel chat. This can be useful when you want to test new themes and don't want to spam your main channel chat and instead use a second account channel chat or the chat of a random streamer that is currently online
 * `theme` - can be set to any theme the overlay client supports. Useful when different scenes in OBS should show the chat in a different theme
   * Currently supported themes: `cities-skylines-ii`, `windows-95`
+
+### Configuring SSL for localhost
+
+To ensure that Twitch can correctly return information to our provided redirect URI it might be necessary to run HTTPS on localhost. You can use `mkcert` to generate self-signed certificates for localhost. To enable SSL for the development server, you can set the following environment variables.
+
+* `ENABLE_HTTPS` - `<boolean>`
+* `SSL_CERT_PATH` - path to the generated `cert.pem` file
+* `SSL_KEY_PATH` - path to the generated `key.pem` file
