@@ -46,17 +46,14 @@ onMounted(async () => {
     // TODO check if token is still valid, redirect to oauth page if not
     if(!token) {
       if(window.location.hash) {
-        const urlParams = window.location.hash.replace('#', '').split('&');
-        const params: Record<string, string> = {};
-        for(const param of urlParams) {
-          const split = param.split('=');
-          params[split[0]] = split[1];
-        }
-        if(params['access_token']) {
-          token = params['access_token'];
-          window.localStorage.setItem('twitch-token', token);
+        const queryParams = new URLSearchParams(window.location.hash.split('#')[1]);
+        if(queryParams.get('access_token')) {
+          token = queryParams.get('access_token');
+          window.localStorage.setItem('twitch-token', token as string);
         }
       } else {
+        // TODO generate a random string and use it as state param to prevent CSRF
+        // https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#implicit-grant-flow
         window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=`;
         return;
       }
