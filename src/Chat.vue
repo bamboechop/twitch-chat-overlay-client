@@ -21,7 +21,18 @@ import { TTheme } from "./common/types/index.type.ts";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { IMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
-import { ChatUserstate, client as tmiClient } from "tmi.js";
+import {
+  AnonSubMysteryGiftUserstate,
+  ChatUserstate,
+  client as tmiClient,
+  DeleteUserstate,
+  SubGiftUpgradeUserstate,
+  SubGiftUserstate,
+  SubMethods,
+  SubMysteryGiftUserstate,
+  SubUserstate,
+  TimeoutUserstate
+} from "tmi.js";
 
 const broadcaster = {
   id: import.meta.env.VITE_TWITCH_BROADCASTER_ID,
@@ -98,19 +109,24 @@ onMounted(async () => {
       return;
     }
 
-    client.connect();
+    await client.connect();
 
-    client.on('message', async (_channel: string, tags: ChatUserstate, message: string, _self: boolean) => {
+    client.on('action', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
+      if(self) {
+        return;
+      }
       const {
         badges: userBadges,
         color,
         'display-name': displayName,
         emotes,
         id,
+        'message-type': msgType,
+        'msg-id': msgId,
         'tmi-sent-ts': timestamp,
         'user-id': userId,
         username: userName,
-      } = tags;
+      } = userstate;
 
       if(!userId) {
         return;
@@ -135,6 +151,8 @@ onMounted(async () => {
         displayName,
         emotes,
         id,
+        msgId,
+        msgType,
         show: true,
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
@@ -143,6 +161,122 @@ onMounted(async () => {
         userName,
         viewerCount,
       });
+    });
+
+    client.on('anonsubmysterygift', (_channel: string, numbOfSubs: number, methods: SubMethods, userstate: AnonSubMysteryGiftUserstate) => {
+      // TODO implement
+    });
+
+    client.on('cheer', async (_channel: string, userstate: ChatUserstate, message: string) => {
+      // TODO handle cheer
+    });
+
+    client.on('chat', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
+      if(self) {
+        return;
+      }
+      const {
+        badges: userBadges,
+        color,
+        'display-name': displayName,
+        emotes,
+        id,
+        'message-type': msgType,
+        'msg-id': msgId,
+        'tmi-sent-ts': timestamp,
+        'user-id': userId,
+        username: userName,
+      } = userstate;
+
+      if(!userId) {
+        return;
+      }
+
+      let cachedImages: string | { [userId: string]: string } | null = window.sessionStorage.getItem('user-avatars');
+      const storedImages: { [userId: string]: string } = cachedImages ? JSON.parse(cachedImages) : {};
+
+      let userImage = storedImages?.[userId];
+      if(!userImage) {
+        const response = await axios.get(`https://api.twitch.tv/helix/users?id=${userId}`);
+        storedImages[userId] = response.data?.data?.[0]?.['profile_image_url'] ?? undefined;
+        if(storedImages[userId]) {
+          userImage = storedImages[userId];
+          window.sessionStorage.setItem('user-avatars', JSON.stringify(storedImages));
+        }
+      }
+      const viewerCount = await getViewerCount();
+      messages.value.push({
+        availableBadges,
+        color,
+        displayName,
+        emotes,
+        id,
+        msgId,
+        msgType,
+        show: true,
+        text: message,
+        timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
+        userBadges,
+        userImage: userImage ?? 'https://placekitten.com/35/35',
+        userName,
+        viewerCount,
+      });
+    });
+
+    client.on('clearchat', (_channel: string) => {
+      messages.value = [];
+    });
+
+    client.on('disconnected', (reason: string) => {
+      console.log('disconnected because of', reason);
+      // TODO implement reconnect
+      // maybe show a short message in visual chat as well
+    });
+
+    client.on('giftpaidupgrade', (channel: string, username: string, sender: string, userstate: SubGiftUpgradeUserstate) => {
+      // TODO implement
+    });
+
+    client.on('messagedeleted', (_channel: string, username:  string, deletedMessage: string, userstate: DeleteUserstate) => {
+      // TODO find message with id (userstate['target-msg-id']) and remove from messages.value
+    });
+
+    client.on('raided', (_channel: string, username: string, viewers: number) => {
+      // TODO implement
+    });
+
+    client.on('resub', (_channel: string, username: string, months: number, message: string, userstate: SubUserstate, methods: SubMethods) => {
+      // TODO implement
+      /*
+       * userstate["msg-param-cumulative-months"]: String - Cumulative months
+       * userstate["msg-param-should-share-streak"]: Boolean - User decided to share their sub streak
+       */
+    });
+
+    client.on('subgift', (_channel: string, username: string, streakMonths: number, recipient: string, methods: SubMethods, userstate: SubGiftUserstate) => {
+      // TODO implement
+      /*
+       * userstate["msg-param-recipient-display-name"]: String - The display name of the recipient
+       * userstate["msg-param-recipient-id"]: String - The ID of the recipient
+       * userstate["msg-param-recipient-user-name"]: String - The login of the recipient
+       * userstate["msg-param-sender-count"]: Boolean or String - The count of giftsubs the sender has sent
+       */
+    });
+
+    client.on('submysterygift', (_channel: string, username: string, numbOfSubs: number, methods: SubMethods, userstate: SubMysteryGiftUserstate) => {
+      // TODO implement
+      /*
+       * userstate["msg-param-sender-count"]: Boolean or String - The total numbers of giftsubs username has given in channel
+       */
+    });
+
+    client.on('subscription', (_channel: string, username: string, methods: SubMethods, message: string, userstate: SubUserstate) => {
+      // TODO implement
+    });
+
+    client.on('timeout', (_channel: string, username: string, reason: string, duration: number, userstate: TimeoutUserstate) => {
+      // TODO implement
+      // throw out all messages from messages.value that are from userstate["target-user-id"]
     });
 
     loading.value = false;

@@ -9,6 +9,8 @@
           :display-name="message.displayName"
           :emotes="message.emotes"
           :id="message.id"
+          :msg-id="message.msgId"
+          :msg-type="message.msgType"
           :text="message.text"
           :user-badges="message.userBadges"
           :user-name="message.userName" />

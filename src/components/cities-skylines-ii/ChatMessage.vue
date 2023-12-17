@@ -1,5 +1,7 @@
 <template>
-  <li class="chat-message">
+  <li
+    class="chat-message"
+    :class="[messageTypeClass]">
     <div class="chat-message__images">
       <img
           :alt="displayName"
@@ -50,26 +52,46 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, toRefs } from "vue";
   // @ts-ignore
   import HeartSvg from '../../assets/heart.svg?component';
   import { IMessage } from "../../common/interfaces/index.interface.ts";
   import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
 
   const props = defineProps<IMessage>();
+  const { msgId, msgType } = toRefs(props);
 
   const audioPlayer = ref<HTMLAudioElement>();
   const heartFilled = Math.random() > .9;
   const humanReadableTimestamp = ref('');
   const interactionCount = ref('0');
+  const isMeMessage = ref(false);
   const messageParts = ref<Record<string, any>[]>([]);
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
+
+  const messageTypeClass = computed(() => {
+    if(!msgType.value) {
+      return;
+    }
+    const classes = [`chat-message--${msgType.value.toLowerCase()}`];
+    if(isMeMessage.value) {
+      classes.push(`chat-message--me`);
+    }
+    if(msgId.value === 'highlighted-message') {
+      classes.push(`chat-message--highlighted`);
+    }
+    return classes.join(' ');
+  });
 
   onMounted(() => {
     messageParts.value = parseMessage(props.emotes, props.text);
 
     if(props.userBadges) {
       userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
+    }
+
+    if(props.userName) {
+      isMeMessage.value = !(['pokemoncommunitygame'].includes(props.userName.toLowerCase()));
     }
 
     const parsedTimestamp = new Date(props.timestamp ?? Date.now());
@@ -108,7 +130,7 @@
     position: relative;
     width: calc(450px - 14px - 14px); // desired width minus 2*padding
 
-    &:last-of-type::before {
+    &:last-of-type::after {
       border-bottom: $triangle-short-side solid transparent;
       border-left: $triangle-long-size solid $background-color;
       border-top: $triangle-short-side solid transparent;
@@ -160,6 +182,7 @@
       display: flex;
       flex-direction: column;
       gap: 5px;
+      z-index: 1;
     }
 
     &__interactions {
@@ -188,6 +211,38 @@
     &__timestamp {
       font-size: 16px;
       margin: 0 0 2px auto;
+    }
+  }
+
+  .chat-message--action {
+    &:not(.chat-message--me) {
+      // TODO figure out how to highlight regular action messages (if highlighting at all)
+    }
+
+    &.chat-message--me::before {
+      content: '';
+      position: absolute;
+      border-width: 70px 0 0 70px;
+      border-color: transparent transparent transparent #ff4532;
+      bottom: 0;
+      border-style: solid;
+      left: 0;
+      border-bottom-left-radius: 5px;
+    }
+  }
+
+  .chat-message--highlighted {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      border-width: 70px 0 0 70px;
+      border-color: transparent transparent transparent #755ebc;
+      bottom: 0;
+      border-style: solid;
+      left: 0;
+      border-bottom-left-radius: 5px;
     }
   }
 </style>

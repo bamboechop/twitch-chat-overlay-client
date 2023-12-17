@@ -13,6 +13,8 @@
                 :display-name="message.displayName"
                 :emotes="message.emotes"
                 :id="message.id"
+                :msg-id="message.msgId"
+                :msg-type="message.msgType"
                 :show="message.show"
                 :text="message.text"
                 :timestamp="message.timestamp"
@@ -36,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, toRefs, watch } from 'vue';
 import ChatMessage from "./ChatMessage.vue";
 // @ts-ignore
 import TwitchSvg from '../../assets/twitch.svg?component';
@@ -44,18 +46,20 @@ import { IMessage } from "../../common/interfaces/index.interface.ts";
 import Loader from "../common/Loader.vue";
 
 const props = defineProps<{ loading: boolean; messages: IMessage[]; }>();
-const messages = ref<IMessage[]>([]);
+const { messages } = toRefs(props);
+
+const internalMessages = ref<IMessage[]>([]);
 
 onMounted(async () => {
   window.setInterval(async () => {
-    messages.value = messages.value.map(message => {
+    internalMessages.value = internalMessages.value.map(message => {
       // remove already hidden messages
       if(!message.show) {
         return undefined;
       }
 
       // set stale messages to be hidden
-      if(!message.timestamp || Date.now() - message.timestamp >= 70000000) {
+      if(!message.timestamp || Date.now() - message.timestamp >= 7000) {
         message.show = false;
       }
 
@@ -64,8 +68,8 @@ onMounted(async () => {
   }, 1000);
 });
 
-watch(props.messages, () => {
-  messages.value = props.messages;
+watch(messages.value, () => {
+  internalMessages.value = props.messages;
 });
 </script>
 

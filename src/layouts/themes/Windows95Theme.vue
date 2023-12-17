@@ -1,6 +1,6 @@
 <template>
   <ChatWindow
-      :active="active"
+    :active="active"
     :messages="messages"
     :viewers="viewers" />
 </template>

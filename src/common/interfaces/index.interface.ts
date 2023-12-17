@@ -22,6 +22,8 @@ export interface IMessage {
   displayName?: string;
   emotes?: { [emoteid: string]: string[]; };
   id?: string;
+  msgId?: 'highlighted-message';
+  msgType?: 'action' | 'chat' | 'whisper'; // action = /me bla | chat = regular message
   show: boolean;
   text: string;
   timestamp?: number;
