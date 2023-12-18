@@ -37,12 +37,7 @@
           </template>
         </template>
       </main>
-      <div class="chat-message__interactions">
-        {{ interactionCount }}
-        <HeartSvg
-          class="chat-message__heart"
-          :class="{ 'chat-message__heart--filled': heartFilled }" />
-      </div>
+      <MessageInteraction :viewer-count="viewerCount" />
     </div>
     <audio
       ref="audioPlayer"
@@ -52,19 +47,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRefs } from "vue";
-  // @ts-ignore
-  import HeartSvg from '../../assets/heart.svg?component';
+  import { computed, onMounted, ref, toRefs } from "vue";
   import { IMessage } from "../../common/interfaces/index.interface.ts";
   import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
+  import MessageInteraction from "./MessageInteraction.vue";
 
   const props = defineProps<IMessage>();
   const { msgId, msgType } = toRefs(props);
 
   const audioPlayer = ref<HTMLAudioElement>();
-  const heartFilled = Math.random() > .9;
   const humanReadableTimestamp = ref('');
-  const interactionCount = ref('0');
   const isMeMessage = ref(false);
   const messageParts = ref<Record<string, any>[]>([]);
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
@@ -98,13 +90,6 @@ import { computed, onMounted, ref, toRefs } from "vue";
     let hours = parsedTimestamp.getHours();
     let minutes = parsedTimestamp.getMinutes();
     humanReadableTimestamp.value = `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}`;
-
-    const count = Math.floor(Math.random() * (props.viewerCount + 1));
-    // noinspection TypeScriptValidateTypes - WebStorm seems to not be up2date for NumberFormat
-    interactionCount.value = new Intl.NumberFormat('en-US', {
-      maximumFractionDigits: 1,
-      notation: 'compact',
-    }).format(heartFilled ? count + 1 : count);
 
     audioPlayer.value?.play();
   });
@@ -168,30 +153,12 @@ import { computed, onMounted, ref, toRefs } from "vue";
       width: 100%;
     }
 
-    &__heart {
-      height: 19px;
-    }
-
-    &__heart--filled {
-      color: #ff4646;
-      fill: #ff4646;
-    }
-
     &__images {
       align-items: center;
       display: flex;
       flex-direction: column;
       gap: 5px;
       z-index: 1;
-    }
-
-    &__interactions {
-      align-items: center;
-      color: #6f7984;
-      display: flex;
-      font-size: 16px;
-      gap: 4px;
-      justify-content: flex-end;
     }
 
     &__name {

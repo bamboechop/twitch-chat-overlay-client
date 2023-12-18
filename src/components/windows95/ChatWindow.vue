@@ -18,8 +18,9 @@ import EnterMessage from "./EnterMessage.vue";
 import ProgramBottomBar from "./ProgramBottomBar.vue";
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import ChatMessages from "./ChatMessages.vue";
+import { TRaidMessage } from "../../common/types/index.type.ts";
 
-defineProps<{ active: boolean; messages: IMessage[]; viewers: number }>();
+defineProps<{ active: boolean; messages: (IMessage | TRaidMessage)[]; viewers: number }>();
 </script>
 
 <style lang="scss" scoped>

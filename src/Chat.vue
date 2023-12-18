@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import CitiesSkylinesIITheme from "./layouts/themes/CitiesSkylinesIITheme.vue";
 import Windows95Theme from "./layouts/themes/Windows95Theme.vue";
-import { TTheme } from "./common/types/index.type.ts";
+import { TRaidMessage, TTheme } from "./common/types/index.type.ts";
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { IMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
@@ -33,6 +33,7 @@ import {
   SubUserstate,
   TimeoutUserstate
 } from "tmi.js";
+import { getUserIdByUserName, getUserImageByUserId } from "./common/helpers/twitch-message.helper.ts";
 
 const broadcaster = {
   id: import.meta.env.VITE_TWITCH_BROADCASTER_ID,
@@ -47,8 +48,10 @@ const debug = !!searchParams.get('debug');
 const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 
 const loading = ref(true);
-const messages = ref<IMessage[]>([]);
+const messages = ref<(IMessage | TRaidMessage)[]>([]);
 const viewers = ref(0);
+
+let userImage = 'https://placekitten.com/35/35';
 
 onMounted(async () => {
   try {
@@ -131,19 +134,10 @@ onMounted(async () => {
         return;
       }
 
-      let cachedImages: string | { [userId: string]: string } | null = window.sessionStorage.getItem('user-avatars');
-      const storedImages: { [userId: string]: string } = cachedImages ? JSON.parse(cachedImages) : {};
-
-      let userImage = storedImages?.[userId];
-      if(!userImage) {
-        const response = await axios.get(`https://api.twitch.tv/helix/users?id=${userId}`);
-        storedImages[userId] = response.data?.data?.[0]?.['profile_image_url'] ?? undefined;
-        if(storedImages[userId]) {
-          userImage = storedImages[userId];
-          window.sessionStorage.setItem('user-avatars', JSON.stringify(storedImages));
-        }
+      if(theme === 'cities-skylines-ii') {
+        userImage = await getUserImageByUserId(userId);
       }
-      const viewerCount = await getViewerCount();
+
       messages.value.push({
         availableBadges,
         color,
@@ -157,9 +151,9 @@ onMounted(async () => {
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         userBadges,
         userId,
-        userImage: userImage ?? 'https://placekitten.com/35/35',
+        userImage,
         userName,
-        viewerCount,
+        viewerCount: viewers.value,
       });
     });
 
@@ -192,19 +186,10 @@ onMounted(async () => {
         return;
       }
 
-      let cachedImages: string | { [userId: string]: string } | null = window.sessionStorage.getItem('user-avatars');
-      const storedImages: { [userId: string]: string } = cachedImages ? JSON.parse(cachedImages) : {};
-
-      let userImage = storedImages?.[userId];
-      if(!userImage) {
-        const response = await axios.get(`https://api.twitch.tv/helix/users?id=${userId}`);
-        storedImages[userId] = response.data?.data?.[0]?.['profile_image_url'] ?? undefined;
-        if(storedImages[userId]) {
-          userImage = storedImages[userId];
-          window.sessionStorage.setItem('user-avatars', JSON.stringify(storedImages));
-        }
+      if(theme === 'cities-skylines-ii') {
+        userImage = await getUserImageByUserId(userId);
       }
-      const viewerCount = await getViewerCount();
+
       messages.value.push({
         availableBadges,
         color,
@@ -218,9 +203,9 @@ onMounted(async () => {
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         userBadges,
         userId,
-        userImage: userImage ?? 'https://placekitten.com/35/35',
+        userImage,
         userName,
-        viewerCount,
+        viewerCount: viewers.value,
       });
     });
 
@@ -242,8 +227,22 @@ onMounted(async () => {
       // TODO find message with id (userstate['target-msg-id']) and remove from messages.value
     });
 
-    client.on('raided', (_channel: string, username: string, viewers: number) => {
-      // TODO implement
+    client.on('raided', async (_channel: string, username: string, viewers: number) => {
+      const userId = await getUserIdByUserName(username);
+      if(theme === 'cities-skylines-ii') {
+        if(userId) {
+          userImage = await getUserImageByUserId(userId);
+        }
+      }
+      messages.value.push({
+        msgType: 'raid',
+        show: true,
+        timestamp: Date.now(),
+        userId,
+        userImage,
+        userName: username,
+        viewerCount: viewers,
+      });
     });
 
     client.on('resub', (_channel: string, username: string, months: number, message: string, userstate: SubUserstate, methods: SubMethods) => {
@@ -287,6 +286,7 @@ onMounted(async () => {
   window.setInterval(async () => {
     await getViewerCount();
   }, 1000 * 60);
+  await getViewerCount();
 });
 
 async function getViewerCount(): Promise<number> {

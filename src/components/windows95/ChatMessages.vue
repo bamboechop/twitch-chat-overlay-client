@@ -4,16 +4,27 @@
       <template
         v-for="message of messages"
         :key="message.id">
-        <ChatMessage
-          :available-badges="message.availableBadges"
-          :display-name="message.displayName"
-          :emotes="message.emotes"
-          :id="message.id"
-          :msg-id="message.msgId"
-          :msg-type="message.msgType"
-          :text="message.text"
-          :user-badges="message.userBadges"
-          :user-name="message.userName" />
+        <template v-if="message.msgType === 'raid'">
+          <RaidMessage
+            :msg-type="message.msgType"
+            :show="message.show"
+            :timestamp="message.timestamp"
+            :user-image="message.userImage"
+            :user-name="message.userName"
+            :viewer-count="message.viewerCount" />
+        </template>
+        <template v-if="message.msgType !== 'raid'">
+          <ChatMessage
+              :available-badges="(message as IMessage).availableBadges"
+              :display-name="(message as IMessage).displayName"
+              :emotes="(message as IMessage).emotes"
+              :id="(message as IMessage).id"
+              :msg-id="(message as IMessage).msgId"
+              :msg-type="(message as IMessage).msgType"
+              :text="(message as IMessage).text"
+              :user-badges="(message as IMessage).userBadges"
+              :user-name="(message as IMessage).userName" />
+        </template>
       </template>
     </ul>
   </div>
@@ -22,8 +33,10 @@
 <script lang="ts" setup>
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import ChatMessage from "./ChatMessage.vue";
+import { TRaidMessage } from "../../common/types/index.type.ts";
+import RaidMessage from "./RaidMessage.vue";
 
-defineProps<{ messages: IMessage[]; }>();
+defineProps<{ messages: (IMessage | TRaidMessage)[]; }>();
 </script>
 
 <style lang="scss" scoped>

@@ -5,24 +5,38 @@
         <template
             v-for="message of messages"
             :key="message.id">
-          <Transition appear>
-            <ChatMessage
+          <template v-if="message.msgType === 'raid'">
+            <Transition appear>
+              <RaidMessage
                 v-show="message.show"
-                :available-badges="message.availableBadges"
-                :color="message.color"
-                :display-name="message.displayName"
-                :emotes="message.emotes"
-                :id="message.id"
-                :msg-id="message.msgId"
                 :msg-type="message.msgType"
                 :show="message.show"
-                :text="message.text"
                 :timestamp="message.timestamp"
                 :user-image="message.userImage"
                 :user-name="message.userName"
-                :user-badges="message.userBadges"
                 :viewer-count="message.viewerCount" />
-          </Transition>
+            </Transition>
+          </template>
+          <template v-if="message.msgType !== 'raid'">
+            <Transition appear>
+              <ChatMessage
+                  v-show="(message as IMessage).show"
+                  :available-badges="(message as IMessage).availableBadges"
+                  :color="(message as IMessage).color"
+                  :display-name="(message as IMessage).displayName"
+                  :emotes="(message as IMessage).emotes"
+                  :id="(message as IMessage).id"
+                  :msg-id="(message as IMessage).msgId"
+                  :msg-type="(message as IMessage).msgType"
+                  :show="(message as IMessage).show"
+                  :text="(message as IMessage).text"
+                  :timestamp="(message as IMessage).timestamp"
+                  :user-image="(message as IMessage).userImage"
+                  :user-name="(message as IMessage).userName"
+                  :user-badges="(message as IMessage).userBadges"
+                  :viewer-count="(message as IMessage).viewerCount" />
+            </Transition>
+          </template>
         </template>
       </ul>
     </div>
@@ -44,11 +58,13 @@ import ChatMessage from "./ChatMessage.vue";
 import TwitchSvg from '../../assets/twitch.svg?component';
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import Loader from "../common/Loader.vue";
+import { TRaidMessage } from "../../common/types/index.type.ts";
+import RaidMessage from "./RaidMessage.vue";
 
-const props = defineProps<{ loading: boolean; messages: IMessage[]; }>();
+const props = defineProps<{ loading: boolean; messages: (IMessage | TRaidMessage)[]; }>();
 const { messages } = toRefs(props);
 
-const internalMessages = ref<IMessage[]>([]);
+const internalMessages = ref<(IMessage | TRaidMessage)[]>([]);
 
 onMounted(async () => {
   window.setInterval(async () => {

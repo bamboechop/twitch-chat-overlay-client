@@ -76,6 +76,8 @@
 </script>
 
 <style lang="scss" scoped>
+  @import '../../styles/variables';
+
   $emote-size: 24px;
 
   .chat-message {
@@ -133,18 +135,15 @@
   }
 
   .chat-message--highlighted {
-    $highlight-element-size: 16px;
-
     position: relative;
 
     &::before {
       background-color: #755ebc;
       bottom: 0;
       content: '';
-      height: 100%;
       position: absolute;
       right: 0;
-      top: 0;
+      top: -9px;
       width: $highlight-element-size;
     }
 
