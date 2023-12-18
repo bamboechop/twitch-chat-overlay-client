@@ -54,7 +54,6 @@ onMounted(async () => {
   try {
     let token = window.localStorage.getItem('twitch-token');
 
-    // TODO check if token is still valid, redirect to oauth page if not
     if(!token) {
       if(window.location.hash) {
         const queryParams = new URLSearchParams(window.location.hash.split('#')[1]);
