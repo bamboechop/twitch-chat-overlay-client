@@ -157,6 +157,7 @@ onMounted(async () => {
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         userBadges,
+        userId,
         userImage: userImage ?? 'https://placekitten.com/35/35',
         userName,
         viewerCount,
@@ -217,6 +218,7 @@ onMounted(async () => {
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         userBadges,
+        userId,
         userImage: userImage ?? 'https://placekitten.com/35/35',
         userName,
         viewerCount,
@@ -274,9 +276,8 @@ onMounted(async () => {
       // TODO implement
     });
 
-    client.on('timeout', (_channel: string, username: string, reason: string, duration: number, userstate: TimeoutUserstate) => {
-      // TODO implement
-      // throw out all messages from messages.value that are from userstate["target-user-id"]
+    client.on('timeout', (_channel: string, _username: string, _reason: string, _duration: number, userstate: TimeoutUserstate) => {
+      messages.value = messages.value.filter(message => message.userId !== userstate['target-user-id']);
     });
 
     loading.value = false;

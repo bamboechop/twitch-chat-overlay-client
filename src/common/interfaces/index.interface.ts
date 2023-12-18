@@ -28,6 +28,7 @@ export interface IMessage {
   text: string;
   timestamp?: number;
   userBadges?: Badges;
+  userId?: string;
   userImage: string;
   userName?: string;
   viewerCount: number;
