@@ -223,8 +223,8 @@ onMounted(async () => {
       // TODO implement
     });
 
-    client.on('messagedeleted', (_channel: string, username:  string, deletedMessage: string, userstate: DeleteUserstate) => {
-      // TODO find message with id (userstate['target-msg-id']) and remove from messages.value
+    client.on('messagedeleted', (_channel: string, _username:  string, _deletedMessage: string, userstate: DeleteUserstate) => {
+      messages.value = messages.value.filter(message => message.id !== userstate["target-msg-id"]);
     });
 
     client.on('raided', async (_channel: string, username: string, viewers: number) => {
