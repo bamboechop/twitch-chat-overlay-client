@@ -20,7 +20,7 @@ import Windows95Theme from "./layouts/themes/Windows95Theme.vue";
 import { TRaidMessage, TTheme } from "./common/types/index.type.ts";
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import { IMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
+import { IMessage, ISubgiftMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
 import {
   AnonSubMysteryGiftUserstate,
   ChatUserstate,
@@ -48,7 +48,7 @@ const debug = !!searchParams.get('debug');
 const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 
 const loading = ref(true);
-const messages = ref<(IMessage | TRaidMessage)[]>([]);
+const messages = ref<(IMessage | ISubgiftMessage | TRaidMessage)[]>([]);
 const viewers = ref(0);
 
 let userImage = 'https://placekitten.com/35/35';
@@ -245,22 +245,101 @@ onMounted(async () => {
       });
     });
 
-    client.on('resub', (_channel: string, username: string, months: number, message: string, userstate: SubUserstate, methods: SubMethods) => {
-      // TODO implement
-      /*
-       * userstate["msg-param-cumulative-months"]: String - Cumulative months
-       * userstate["msg-param-should-share-streak"]: Boolean - User decided to share their sub streak
-       */
+    client.on('resub', async (_channel: string, username: string, months: number, message: string, userstate: SubUserstate, methods: SubMethods) => {
+      const {
+        badges: userBadges,
+        color,
+        'display-name': displayName,
+        emotes,
+        id,
+        'message-type': msgType,
+        'msg-id': msgId,
+        'msg-param-cumulative-months': subCumulativeMonthsString,
+        'msg-param-sub-plan': subPlanString,
+        'tmi-sent-ts': timestamp,
+        'user-id': userId,
+        username: userName,
+      } = userstate;
+
+      if(!userId) {
+        return;
+      }
+
+      if(theme === 'cities-skylines-ii') {
+        userImage = await getUserImageByUserId(userId);
+      }
+
+      messages.value.push({
+        availableBadges,
+        color,
+        displayName,
+        emotes,
+        id,
+        msgId,
+        msgType,
+        show: true,
+        subCumulativeMonthsString,
+        subPlanString,
+        text: message,
+        timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
+        userBadges,
+        userId,
+        userImage,
+        userName,
+        viewerCount: viewers.value,
+      });
     });
 
-    client.on('subgift', (_channel: string, username: string, streakMonths: number, recipient: string, methods: SubMethods, userstate: SubGiftUserstate) => {
-      // TODO implement
-      /*
-       * userstate["msg-param-recipient-display-name"]: String - The display name of the recipient
-       * userstate["msg-param-recipient-id"]: String - The ID of the recipient
-       * userstate["msg-param-recipient-user-name"]: String - The login of the recipient
-       * userstate["msg-param-sender-count"]: Boolean or String - The count of giftsubs the sender has sent
-       */
+    client.on('subgift', async (_channel: string, username: string, streakMonths: number, recipient: string, methods: SubMethods, userstate: SubGiftUserstate) => {
+      console.log('subgift', { _channel, username, streakMonths, userstate, recipient, methods });
+
+      const {
+        'display-name': senderDisplayName,
+        id,
+        'login': senderUserName,
+        'message-type': msgType,
+        'msg-id': msgId,
+        'msg-param-sub-plan': subPlanString,
+        'msg-param-recipient-display-name': recipientDisplayName,
+        'msg-param-recipient-id': recipientId,
+        'msg-param-recipient-user-name': recipientUserName,
+        'tmi-sent-ts': timestamp,
+        'user-id': senderId,
+      } = userstate;
+
+      if(!recipientId || !senderId) {
+        return;
+      }
+
+      let recipientImage, senderImage;
+      if(theme === 'cities-skylines-ii') {
+        [recipientImage, senderImage] = await Promise.all([
+          getUserImageByUserId(recipientId),
+          getUserImageByUserId(senderId),
+        ]);
+      }
+
+      (messages.value as ISubgiftMessage[]).push({
+        id,
+        msgId,
+        msgType,
+        recipient: {
+          displayName: recipientDisplayName,
+          id: recipientId,
+          image: recipientImage ?? userImage,
+          userName: recipientUserName,
+        },
+        sender: {
+          displayName: senderDisplayName,
+          id: senderId,
+          image: senderImage ?? userImage,
+          userName: senderUserName,
+        },
+        show: true,
+        subPlanString,
+        timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
+        viewerCount: viewers.value,
+      });
     });
 
     client.on('submysterygift', (_channel: string, username: string, numbOfSubs: number, methods: SubMethods, userstate: SubMysteryGiftUserstate) => {
@@ -270,8 +349,51 @@ onMounted(async () => {
        */
     });
 
-    client.on('subscription', (_channel: string, username: string, methods: SubMethods, message: string, userstate: SubUserstate) => {
-      // TODO implement
+    client.on('subscription', async (_channel: string, username: string, methods: SubMethods, message: string, userstate: SubUserstate) => {
+      console.log('subscription', { _channel, username, message, userstate, methods });
+
+      const {
+        badges: userBadges,
+        color,
+        'display-name': displayName,
+        emotes,
+        id,
+        'message-type': msgType,
+        'msg-id': msgId,
+        'msg-param-cumulative-months': subCumulativeMonthsString,
+        'msg-param-sub-plan': subPlanString,
+        'tmi-sent-ts': timestamp,
+        'user-id': userId,
+        username: userName,
+      } = userstate;
+
+      if(!userId) {
+        return;
+      }
+
+      if(theme === 'cities-skylines-ii') {
+        userImage = await getUserImageByUserId(userId);
+      }
+
+      messages.value.push({
+        availableBadges,
+        color,
+        displayName,
+        emotes,
+        id,
+        msgId,
+        msgType,
+        show: true,
+        subCumulativeMonthsString,
+        subPlanString,
+        text: message,
+        timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
+        userBadges,
+        userId,
+        userImage,
+        userName,
+        viewerCount: viewers.value,
+      });
     });
 
     client.on('timeout', (_channel: string, _username: string, _reason: string, _duration: number, userstate: TimeoutUserstate) => {

@@ -22,9 +22,11 @@ export interface IMessage {
   displayName?: string;
   emotes?: { [emoteid: string]: string[]; };
   id?: string;
-  msgId?: 'highlighted-message';
-  msgType?: 'action' | 'chat' | 'raid' | 'whisper'; // action = /me bla | chat = regular message
+  msgId?: 'highlighted-message' | 'resub' | 'sub' | 'subgift'; // TODO check screenshots and set accordingly
+  msgType?: 'action' | 'chat' | 'raid' | 'resub' | 'sub' | 'subgift' | 'whisper'; // action = /me bla | chat = regular message
   show: boolean;
+  subCumulativeMonthsString?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
+  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
   text: string;
   timestamp?: number;
   userBadges?: Badges;
@@ -32,4 +34,19 @@ export interface IMessage {
   userImage: string;
   userName?: string;
   viewerCount: number;
+}
+
+export interface ISubgiftMessage extends Pick<IMessage, 'id' | 'msgId' | 'msgType' | 'show' | 'subPlanString' | 'timestamp' | 'viewerCount'> {
+  recipient: {
+    displayName?: string;
+    id: string;
+    image: string;
+    userName?: string;
+  };
+  sender: {
+    displayName?: string;
+    id: string;
+    image: string;
+    userName?: string;
+  };
 }
