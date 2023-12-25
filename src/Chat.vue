@@ -158,11 +158,12 @@ onMounted(async () => {
     });
 
     client.on('anonsubmysterygift', (_channel: string, numbOfSubs: number, methods: SubMethods, userstate: AnonSubMysteryGiftUserstate) => {
-      // TODO implement
+      console.log('anonsubmysterygift', { _channel, numbOfSubs, methods, userstate });
     });
 
+    // test with stesi
     client.on('cheer', async (_channel: string, userstate: ChatUserstate, message: string) => {
-      // TODO handle cheer
+      console.log('cheer', { _channel, userstate, message });
     });
 
     client.on('chat', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
@@ -214,13 +215,14 @@ onMounted(async () => {
     });
 
     client.on('disconnected', (reason: string) => {
-      console.log('disconnected because of', reason);
+      console.log('disconnected', { reason });
       // TODO implement reconnect
       // maybe show a short message in visual chat as well
+      // how about a little "connected to chat" text in the bottom left box of the Windows 95 theme?
     });
 
-    client.on('giftpaidupgrade', (channel: string, username: string, sender: string, userstate: SubGiftUpgradeUserstate) => {
-      // TODO implement
+    client.on('giftpaidupgrade', (_channel: string, username: string, sender: string, userstate: SubGiftUpgradeUserstate) => {
+      console.log('giftpaidupgrade', { _channel, username, sender, userstate });
     });
 
     client.on('messagedeleted', (_channel: string, _username:  string, _deletedMessage: string, userstate: DeleteUserstate) => {
@@ -343,7 +345,7 @@ onMounted(async () => {
     });
 
     client.on('submysterygift', (_channel: string, username: string, numbOfSubs: number, methods: SubMethods, userstate: SubMysteryGiftUserstate) => {
-      // TODO implement
+      console.log('submysterygift', { _channel, username, numbOfSubs, userstate, methods });
       /*
        * userstate["msg-param-sender-count"]: Boolean or String - The total numbers of giftsubs username has given in channel
        */
