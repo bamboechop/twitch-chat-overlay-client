@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts" setup>
-import { TRaidMessage } from "../../common/types/index.type.ts";
+import { IRaid } from "../../common/interfaces/index.interface.ts";
 
-defineProps<TRaidMessage>();
+defineProps<IRaid>();
 </script>
 
 <style lang="scss" scoped>
@@ -37,6 +37,7 @@ defineProps<TRaidMessage>();
 
   &__name {
     position: relative;
+    text-decoration: underline;
 
     &::before {
       background-color: #000;

@@ -16,11 +16,10 @@ import ProgramTitleBar from "./ProgramTitleBar.vue";
 import ProgramButtonBar from "./ProgramButtonBar.vue";
 import EnterMessage from "./EnterMessage.vue";
 import ProgramBottomBar from "./ProgramBottomBar.vue";
-import { IMessage, ISubgiftMessage } from "../../common/interfaces/index.interface.ts";
 import ChatMessages from "./ChatMessages.vue";
-import { TRaidMessage } from "../../common/types/index.type.ts";
+import { TMessage } from "../../common/types/index.type.ts";
 
-defineProps<{ active: boolean; messages: (IMessage | ISubgiftMessage | TRaidMessage)[]; viewers: number }>();
+defineProps<{ active: boolean; messages: TMessage[]; viewers: number }>();
 </script>
 
 <style lang="scss" scoped>

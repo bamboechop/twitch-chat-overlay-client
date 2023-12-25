@@ -16,14 +16,65 @@ export interface ITwitchBadgeResponse {
   }[];
 }
 
-export interface IMessage {
-  availableBadges: Record<string, { description: string; id: string; imageUrl: string; title: string }[]>;
+export interface IBadge {
+  description: string;
+  id: string;
+  imageUrl: string;
+  title: string;
+}
+
+export interface IAction {
+  availableBadges: Record<string, IBadge[]>;
+  color?: string;
+  displayName?: string;
+  emotes?: { [emoteid: string]: string[]; };
+  id?: string,
+  msgId?: 'highlighted-message';
+  msgType: 'action';
+  show: boolean;
+  text: string;
+  timestamp?: number;
+  userBadges?: Badges;
+  userImage: string;
+  userName?: string;
+  viewerCount: number;
+}
+
+export interface IChat {
+  availableBadges: Record<string, IBadge[]>;
+  color?: string;
+  displayName?: string;
+  emotes?: { [emoteid: string]: string[]; };
+  id?: string,
+  msgType: 'chat';
+  show: boolean;
+  text: string;
+  timestamp?: number;
+  userBadges?: Badges;
+  userImage: string;
+  userName?: string;
+  viewerCount: number;
+}
+
+export interface IRaid {
+  msgType: 'raid';
+  show: boolean;
+  timestamp: number;
+  userId: string;
+  userImage: string;
+  userName: string;
+  viewerCount: number;
+}
+
+export interface IResub {
+  availableBadges: Record<string, IBadge[]>;
   color?: string;
   displayName?: string;
   emotes?: { [emoteid: string]: string[]; };
   id?: string;
-  msgId?: 'highlighted-message' | 'resub' | 'sub' | 'subgift'; // TODO check screenshots and set accordingly
-  msgType?: 'action' | 'chat' | 'raid' | 'resub' | 'sub' | 'subgift' | 'whisper'; // action = /me bla | chat = regular message
+  months: number;
+  msgId?: 'resub';
+  msgType: 'resub';
   show: boolean;
   subCumulativeMonthsString?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
   subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
@@ -36,17 +87,62 @@ export interface IMessage {
   viewerCount: number;
 }
 
-export interface ISubgiftMessage extends Pick<IMessage, 'id' | 'msgId' | 'msgType' | 'show' | 'subPlanString' | 'timestamp' | 'viewerCount'> {
-  recipient: {
-    displayName?: string;
-    id: string;
-    image: string;
-    userName?: string;
-  };
-  sender: {
-    displayName?: string;
-    id: string;
-    image: string;
-    userName?: string;
-  };
+interface ISubGiftUser {
+  displayName?: string;
+  id: string;
+  image: string;
+  userName?: string;
+};
+
+export interface ISubGift {
+  id?: string;
+  loveEmotePath: string;
+  msgId?: 'subgift';
+  msgType: 'subgift';
+  recipient: ISubGiftUser;
+  sender: ISubGiftUser;
+  show: boolean;
+  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
+  timestamp?: number;
+  viewerCount: number;
+}
+
+export interface ISubscription {
+  availableBadges: Record<string, IBadge[]>;
+  color?: string;
+  displayName?: string;
+  emotes?: { [emoteid: string]: string[]; };
+  id?: string;
+  msgId?: 'sub';
+  msgType: 'subscription';
+  show: boolean;
+  subCumulativeMonthsString?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
+  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
+  text: string;
+  timestamp?: number;
+  userBadges?: Badges;
+  userId?: string;
+  userImage: string;
+  userName?: string;
+  viewerCount: number;
+}
+
+export interface IMessage {
+  availableBadges: Record<string, IBadge[]>;
+  color?: string;
+  displayName?: string;
+  emotes?: { [emoteid: string]: string[]; };
+  id?: string;
+  msgId?: 'highlighted-message' | 'resub' | 'sub' | 'subgift'; // TODO check screenshots and set accordingly
+  msgType: 'action' | 'chat' | 'raid' | 'resub' | 'sub' | 'subgift' | 'whisper'; // action = /me bla | chat = regular message
+  show: boolean;
+  subCumulativeMonthsString?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
+  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
+  text: string;
+  timestamp?: number;
+  userBadges?: Badges;
+  userId?: string;
+  userImage: string;
+  userName?: string;
+  viewerCount: number;
 }

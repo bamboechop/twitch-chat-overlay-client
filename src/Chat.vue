@@ -17,10 +17,18 @@
 <script setup lang="ts">
 import CitiesSkylinesIITheme from "./layouts/themes/CitiesSkylinesIITheme.vue";
 import Windows95Theme from "./layouts/themes/Windows95Theme.vue";
-import { TRaidMessage, TTheme } from "./common/types/index.type.ts";
+import { TMessage, TTheme } from "./common/types/index.type.ts";
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import { IMessage, ISubgiftMessage, ITwitchBadgeResponse } from "./common/interfaces/index.interface.ts";
+import {
+  IAction,
+  IChat,
+  IRaid,
+  IResub,
+  ISubGift,
+  ISubscription,
+  ITwitchBadgeResponse
+} from "./common/interfaces/index.interface.ts";
 import {
   AnonSubMysteryGiftUserstate,
   ChatUserstate,
@@ -48,7 +56,7 @@ const debug = !!searchParams.get('debug');
 const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 
 const loading = ref(true);
-const messages = ref<(IMessage | ISubgiftMessage | TRaidMessage)[]>([]);
+const messages = ref<TMessage[]>([]);
 const viewers = ref(0);
 
 let userImage = 'https://placekitten.com/35/35';
@@ -114,6 +122,7 @@ onMounted(async () => {
     await client.connect();
 
     client.on('action', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
+      console.log({ userstate, _channel, message });
       if(self) {
         return;
       }
@@ -123,7 +132,6 @@ onMounted(async () => {
         'display-name': displayName,
         emotes,
         id,
-        'message-type': msgType,
         'msg-id': msgId,
         'tmi-sent-ts': timestamp,
         'user-id': userId,
@@ -145,7 +153,7 @@ onMounted(async () => {
         emotes,
         id,
         msgId,
-        msgType,
+        msgType: 'action',
         show: true,
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
@@ -154,7 +162,7 @@ onMounted(async () => {
         userImage,
         userName,
         viewerCount: viewers.value,
-      });
+      } as IAction);
     });
 
     client.on('anonsubmysterygift', (_channel: string, numbOfSubs: number, methods: SubMethods, userstate: AnonSubMysteryGiftUserstate) => {
@@ -167,6 +175,7 @@ onMounted(async () => {
     });
 
     client.on('chat', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
+      console.log(userstate);
       if(self) {
         return;
       }
@@ -176,8 +185,6 @@ onMounted(async () => {
         'display-name': displayName,
         emotes,
         id,
-        'message-type': msgType,
-        'msg-id': msgId,
         'tmi-sent-ts': timestamp,
         'user-id': userId,
         username: userName,
@@ -197,8 +204,7 @@ onMounted(async () => {
         displayName,
         emotes,
         id,
-        msgId,
-        msgType,
+        msgType: 'chat',
         show: true,
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
@@ -207,7 +213,7 @@ onMounted(async () => {
         userImage,
         userName,
         viewerCount: viewers.value,
-      });
+      } as IChat);
     });
 
     client.on('clearchat', (_channel: string) => {
@@ -226,7 +232,12 @@ onMounted(async () => {
     });
 
     client.on('messagedeleted', (_channel: string, _username:  string, _deletedMessage: string, userstate: DeleteUserstate) => {
-      messages.value = messages.value.filter(message => message.id !== userstate["target-msg-id"]);
+      messages.value = messages.value.filter(message => {
+        if(!('id' in message)) {
+          return message;
+        }
+        return message.id !== userstate["target-msg-id"];
+      });
     });
 
     client.on('raided', async (_channel: string, username: string, viewers: number) => {
@@ -236,6 +247,7 @@ onMounted(async () => {
           userImage = await getUserImageByUserId(userId);
         }
       }
+
       messages.value.push({
         msgType: 'raid',
         show: true,
@@ -244,17 +256,16 @@ onMounted(async () => {
         userImage,
         userName: username,
         viewerCount: viewers,
-      });
+      } as IRaid);
     });
 
-    client.on('resub', async (_channel: string, username: string, months: number, message: string, userstate: SubUserstate, methods: SubMethods) => {
+    client.on('resub', async (_channel: string, _username: string, months: number, message: string, userstate: SubUserstate, _methods: SubMethods) => {
       const {
         badges: userBadges,
         color,
         'display-name': displayName,
         emotes,
         id,
-        'message-type': msgType,
         'msg-id': msgId,
         'msg-param-cumulative-months': subCumulativeMonthsString,
         'msg-param-sub-plan': subPlanString,
@@ -277,8 +288,9 @@ onMounted(async () => {
         displayName,
         emotes,
         id,
+        months,
         msgId,
-        msgType,
+        msgType: 'resub',
         show: true,
         subCumulativeMonthsString,
         subPlanString,
@@ -289,7 +301,7 @@ onMounted(async () => {
         userImage,
         userName,
         viewerCount: viewers.value,
-      });
+      } as IResub);
     });
 
     client.on('subgift', async (_channel: string, username: string, streakMonths: number, recipient: string, methods: SubMethods, userstate: SubGiftUserstate) => {
@@ -299,7 +311,6 @@ onMounted(async () => {
         'display-name': senderDisplayName,
         id,
         'login': senderUserName,
-        'message-type': msgType,
         'msg-id': msgId,
         'msg-param-sub-plan': subPlanString,
         'msg-param-recipient-display-name': recipientDisplayName,
@@ -321,10 +332,11 @@ onMounted(async () => {
         ]);
       }
 
-      (messages.value as ISubgiftMessage[]).push({
+      messages.value.push({
         id,
+        loveEmotePath: '',
         msgId,
-        msgType,
+        msgType: 'subgift',
         recipient: {
           displayName: recipientDisplayName,
           id: recipientId,
@@ -341,7 +353,7 @@ onMounted(async () => {
         subPlanString,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         viewerCount: viewers.value,
-      });
+      } as ISubGift);
     });
 
     client.on('submysterygift', (_channel: string, username: string, numbOfSubs: number, methods: SubMethods, userstate: SubMysteryGiftUserstate) => {
@@ -360,7 +372,6 @@ onMounted(async () => {
         'display-name': displayName,
         emotes,
         id,
-        'message-type': msgType,
         'msg-id': msgId,
         'msg-param-cumulative-months': subCumulativeMonthsString,
         'msg-param-sub-plan': subPlanString,
@@ -384,7 +395,7 @@ onMounted(async () => {
         emotes,
         id,
         msgId,
-        msgType,
+        msgType: 'subscription',
         show: true,
         subCumulativeMonthsString,
         subPlanString,
@@ -395,11 +406,16 @@ onMounted(async () => {
         userImage,
         userName,
         viewerCount: viewers.value,
-      });
+      } as ISubscription);
     });
 
     client.on('timeout', (_channel: string, _username: string, _reason: string, _duration: number, userstate: TimeoutUserstate) => {
-      messages.value = messages.value.filter(message => message.userId !== userstate['target-user-id']);
+      messages.value = messages.value.filter(message => {
+        if(!('userId' in message)) {
+          return message;
+        }
+        return message.userId !== userstate['target-user-id'];
+      })
     });
 
     loading.value = false;
