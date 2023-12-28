@@ -54,7 +54,6 @@ import { onMounted, ref, toRefs, watch } from 'vue';
 import ChatMessage from "./ChatMessage.vue";
 // @ts-ignore
 import TwitchSvg from '../../assets/twitch.svg?component';
-import { IMessage } from "../../common/interfaces/index.interface.ts";
 import Loader from "../common/Loader.vue";
 import { TMessage } from "../../common/types/index.type.ts";
 import RaidMessage from "./RaidMessage.vue";

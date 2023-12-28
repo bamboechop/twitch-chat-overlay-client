@@ -129,7 +129,6 @@ onMounted(async () => {
     await client.connect();
 
     client.on('action', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
-      console.log({ userstate, _channel, message });
       if(self) {
         return;
       }
@@ -182,7 +181,6 @@ onMounted(async () => {
     });
 
     client.on('chat', async (_channel: string, userstate: ChatUserstate, message: string, self: boolean) => {
-      console.log(userstate);
       if(self) {
         return;
       }
@@ -308,9 +306,7 @@ onMounted(async () => {
       } as IResub);
     });
 
-    client.on('subgift', async (_channel: string, username: string, streakMonths: number, recipient: string, methods: SubMethods, userstate: SubGiftUserstate) => {
-      console.log('subgift', { _channel, username, streakMonths, userstate, recipient, methods });
-
+    client.on('subgift', async (_channel: string, _username: string, _streakMonths: number, _recipient: string, _methods: SubMethods, userstate: SubGiftUserstate) => {
       const {
         'display-name': senderDisplayName,
         id,
@@ -366,9 +362,7 @@ onMounted(async () => {
        */
     });
 
-    client.on('subscription', async (_channel: string, username: string, methods: SubMethods, message: string, userstate: SubUserstate) => {
-      console.log('subscription', { _channel, username, message, userstate, methods });
-
+    client.on('subscription', async (_channel: string, _username: string, _methods: SubMethods, _message: string, userstate: SubUserstate) => {
       const {
         color,
         'display-name': displayName,
@@ -418,6 +412,8 @@ onMounted(async () => {
     });
 
     loading.value = false;
+
+    await client.say('#channel', 'submysterygift --count 20 --username zebiniasis')
   } catch(err) {
     console.error(err);
   }
