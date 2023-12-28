@@ -19,7 +19,7 @@ defineProps<ISubscription>();
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
+@import '../../styles/windows95.variables';
 
 .subscription-message {
   color: #000;

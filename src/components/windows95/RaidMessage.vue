@@ -20,7 +20,7 @@ defineProps<IRaid>();
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
+@import '../../styles/windows95.variables';
 
 .raid-message {
   line-height: 1;

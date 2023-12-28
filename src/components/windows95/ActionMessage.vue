@@ -75,7 +75,7 @@
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
+@import '../../styles/windows95.variables';
 
 .action-message {
   color: #000;

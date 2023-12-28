@@ -59,7 +59,7 @@ audioPlayer.value?.play();
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
+@import '../../styles/cities-skylines-ii.variables';
 
 $avatar-size: 42px;
 $background-color: rgba(225, 225, 225, 0.85);

@@ -54,7 +54,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '../../styles/variables';
+  @import '../../styles/windows95.variables';
 
   .chat-message {
     color: #000;

@@ -24,7 +24,7 @@ defineProps<ISubGift>();
 </script>
 
 <style lang="scss" scoped>
-@import '../../styles/variables';
+@import '../../styles/windows95.variables';
 
 .subgift-message {
   color: #000;

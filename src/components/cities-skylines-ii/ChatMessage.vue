@@ -96,13 +96,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '../../styles/variables';
-
-  $avatar-size: 42px;
-  $background-color: rgba(225, 225, 225, 0.85);
-  $emote-size: 28px;
-  $triangle-long-size: 30px;
-  $triangle-short-side: 20px;
+  @import '../../styles/cities-skylines-ii.variables';
 
   .chat-message {
     background-color: $background-color;

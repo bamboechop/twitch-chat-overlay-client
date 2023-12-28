@@ -5,36 +5,34 @@
         <template
             v-for="message of messages"
             :key="message.id">
-          <template v-if="message.msgType === 'raid'">
+          <template v-if="message.msgType === 'action'">
             <Transition appear>
-              <RaidMessage
-                v-show="message.show"
-                :msg-type="message.msgType"
-                :show="message.show"
-                :timestamp="message.timestamp"
-                :user-image="message.userImage"
-                :user-name="message.userName"
-                :viewer-count="message.viewerCount" />
+              <ActionMessage v-bind="message" />
             </Transition>
           </template>
-          <template v-if="message.msgType !== 'raid'">
+          <template v-if="message.msgType === 'chat'">
             <Transition appear>
-              <ChatMessage
-                  v-show="(message as IMessage).show"
-                  :available-badges="(message as IMessage).availableBadges"
-                  :color="(message as IMessage).color"
-                  :display-name="(message as IMessage).displayName"
-                  :emotes="(message as IMessage).emotes"
-                  :id="(message as IMessage).id"
-                  :msg-id="(message as IMessage).msgId"
-                  :msg-type="(message as IMessage).msgType"
-                  :show="(message as IMessage).show"
-                  :text="(message as IMessage).text"
-                  :timestamp="(message as IMessage).timestamp"
-                  :user-image="(message as IMessage).userImage"
-                  :user-name="(message as IMessage).userName"
-                  :user-badges="(message as IMessage).userBadges"
-                  :viewer-count="(message as IMessage).viewerCount" />
+              chat message
+            </Transition>
+          </template>
+          <template v-if="message.msgType === 'raid'">
+            <Transition appear>
+              <RaidMessage v-bind="message" />
+            </Transition>
+          </template>
+          <template v-if="message.msgType === 'resub'">
+            <Transition appear>
+              resub message
+            </Transition>
+          </template>
+          <template v-if="message.msgType === 'subgift'">
+            <Transition appear>
+              subgift message
+            </Transition>
+          </template>
+          <template v-if="message.msgType === 'subscription'">
+            <Transition appear>
+              subscription message
             </Transition>
           </template>
         </template>
@@ -58,13 +56,14 @@ import ChatMessage from "./ChatMessage.vue";
 import TwitchSvg from '../../assets/twitch.svg?component';
 import { IMessage } from "../../common/interfaces/index.interface.ts";
 import Loader from "../common/Loader.vue";
-import { TRaidMessage } from "../../common/types/index.type.ts";
+import { TMessage } from "../../common/types/index.type.ts";
 import RaidMessage from "./RaidMessage.vue";
+import ActionMessage from "./ActionMessage.vue";
 
-const props = defineProps<{ loading: boolean; messages: (IMessage | TRaidMessage)[]; }>();
+const props = defineProps<{ loading: boolean; messages: TMessage[]; }>();
 const { messages } = toRefs(props);
 
-const internalMessages = ref<(IMessage | TRaidMessage)[]>([]);
+const internalMessages = ref<TMessage[]>([]);
 
 onMounted(async () => {
   window.setInterval(async () => {
@@ -80,7 +79,7 @@ onMounted(async () => {
       }
 
       return message;
-    }).filter(message => !!message) as IMessage[];
+    }).filter(message => !!message) as TMessage[];
   }, 1000);
 });
 
@@ -90,7 +89,7 @@ watch(messages.value, () => {
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/variables';
+@import '../../styles/cities-skylines-ii.variables';
 
 $button-icon-size: 38px;
 
