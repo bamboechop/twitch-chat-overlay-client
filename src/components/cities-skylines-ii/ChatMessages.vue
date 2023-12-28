@@ -27,7 +27,7 @@
           </template>
           <template v-if="message.msgType === 'subgift'">
             <Transition appear>
-              subgift message
+              <SubgiftMessage v-bind="message" />
             </Transition>
           </template>
           <template v-if="message.msgType === 'subscription'">
@@ -61,6 +61,7 @@ import RaidMessage from "./RaidMessage.vue";
 import ActionMessage from "./ActionMessage.vue";
 import ResubMessage from "./ResubMessage.vue";
 import SubscriptionMessage from "./SubscriptionMessage.vue";
+import SubgiftMessage from "./SubgiftMessage.vue";
 
 const props = defineProps<{ loading: boolean; messages: TMessage[]; }>();
 const { messages } = toRefs(props);

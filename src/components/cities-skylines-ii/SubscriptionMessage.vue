@@ -27,7 +27,7 @@
     </div>
     <audio
       ref="audioPlayer"
-      src="chirper.mp3"
+      src="/chirper.mp3"
       style="display: none"></audio>
   </li>
 </template>
@@ -139,6 +139,7 @@ onMounted(() => {
     font-size: 19px;
     letter-spacing: -.4px;
     line-height: 27px;
+    margin-top: -12px;
     text-align: left;
   }
 

@@ -39,7 +39,7 @@
     </div>
     <audio
       ref="audioPlayer"
-      src="chirper.mp3"
+      src="/chirper.mp3"
       style="display: none"></audio>
   </li>
 </template>

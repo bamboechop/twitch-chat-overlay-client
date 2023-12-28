@@ -14,13 +14,17 @@
         <span class="raid-message__timestamp">{{ humanReadableTimestamp }}</span>
       </header>
       <main class="raid-message__text">
-        is raiding with {{ viewerCount }} viewers!
+        raidet uns mit {{ viewerCount }} Zusehern! Vielen Dank, wie war dein Stream?
+        <img
+            alt="bamboe1LOVE"
+            class="raid-message__emote"
+            src="/bamboe1LOVE.png" />
       </main>
       <MessageInteraction :viewer-count="viewerCount" />
     </div>
     <audio
         ref="audioPlayer"
-        src="chirper.mp3"
+        src="/chirper.mp3"
         style="display: none"></audio>
   </li>
 </template>
@@ -146,6 +150,7 @@ $triangle-short-side: 20px;
     font-size: 19px;
     letter-spacing: -.4px;
     line-height: 27px;
+    margin-top: -12px;
     text-align: left;
   }
 

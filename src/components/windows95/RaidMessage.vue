@@ -6,9 +6,9 @@
     <main>
       Vielen Dank, wie war dein Stream?
       <img
-          alt="bamboe1LOVE"
-          class="raid-message__emote"
-          src="/bamboe1LOVE.png" />
+        alt="bamboe1LOVE"
+        class="raid-message__emote"
+        src="/bamboe1LOVE.png" />
     </main>
   </li>
 </template>
