@@ -42,6 +42,12 @@ import {
   TimeoutUserstate
 } from "tmi.js";
 import { getUserIdByUserName, getUserImageByUserId, parsePlan } from "./common/helpers/twitch-message.helper.ts";
+import { resubDummy } from "../data/resub.data.ts";
+import { subscriptionDummy } from "../data/subscription.data.ts";
+import { subgiftDummy } from "../data/subgift.data.ts";
+import { actionDummy } from "../data/action.data.ts";
+import { chatDummy } from "../data/chat.data.ts";
+import { raidDummy } from "../data/raid.data.ts";
 
 const broadcaster = {
   id: import.meta.env.VITE_TWITCH_BROADCASTER_ID,
@@ -51,8 +57,9 @@ const clientId = import.meta.env.VITE_TWITCH_CLIENT_ID;
 const redirectUri = import.meta.env.VITE_TWITCH_REDIRECT_URI;
 
 const searchParams = new URLSearchParams(window.location.search);
-const active = !!searchParams.get('active');
-const debug = !!searchParams.get('debug');
+const active = searchParams.get('active') === 'true';
+const debug = searchParams.get('debug') === 'true';
+const messageDebug = searchParams.get('message-debug') === 'true';
 const theme: TTheme = searchParams.get('theme') as TTheme ?? import.meta.env.VITE_THEME;
 
 const loading = ref(true);
@@ -413,6 +420,10 @@ onMounted(async () => {
     loading.value = false;
   } catch(err) {
     console.error(err);
+  }
+
+  if(messageDebug) {
+    messages.value.push(resubDummy, subscriptionDummy, subgiftDummy, ...actionDummy, chatDummy, raidDummy);
   }
 
   window.setInterval(async () => {
