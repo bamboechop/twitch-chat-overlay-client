@@ -67,20 +67,18 @@ export interface IRaid {
 }
 
 export interface IResub {
-  availableBadges: Record<string, IBadge[]>;
   color?: string;
+  cumulativeMonths?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
   displayName?: string;
   emotes?: { [emoteid: string]: string[]; };
   id?: string;
   months: number;
   msgId?: 'resub';
   msgType: 'resub';
+  plan?: 1 | 2 | 3 | 'Prime';
   show: boolean;
-  subCumulativeMonthsString?: boolean | string; // TODO refactor to always be a number - true => 1, otherwise parse string to number
-  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
   text: string;
   timestamp?: number;
-  userBadges?: Badges;
   userId?: string;
   userImage: string;
   userName?: string;

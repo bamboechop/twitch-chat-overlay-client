@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Badges } from "tmi.js";
+import { Badges, SubMethod } from "tmi.js";
 import { getEmoteAsUrl, parseEmotesInMessage } from "tmi-utils";
 
 export async function getUserIdByUserName(username: string): Promise<string | undefined> {
@@ -43,4 +43,11 @@ export function parseUserBadges(userBadges: Badges, availableBadges: Record<stri
     }
   }
   return badges;
+}
+
+export function parsePlan(plan?: SubMethod): number | 'Prime' | undefined {
+  if(!plan || plan === 'Prime') {
+    return plan;
+  }
+  return parseInt(plan.substring(0, 1), 10);
 }

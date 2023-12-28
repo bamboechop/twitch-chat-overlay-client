@@ -1,11 +1,11 @@
 <template>
   <li class="resub-message">
     <header class="resub-message__header">
-      {{ displayName }}
+      <span class="resub-message__name">{{ displayName }}</span>
       <template v-if="displayName?.toLowerCase() !== userName?.toLowerCase()">
         ({{ userName }})
       </template>
-      ist seit {{ months }} Monaten dabei!
+      ist seit {{ months }} Monaten mit einem Stufe {{ plan }} Abonnement dabei!
     </header>
     <template v-if="messageParts.length > 0">
       <main class="resub-message__text">
@@ -48,7 +48,19 @@ onMounted(() => {
   gap: 4px;
   grid-template-rows: 18px 1fr;
   justify-content: start;
+  padding-right: calc(2px + #{$highlight-element-size});
+  position: relative;
   width: 100%;
+
+  &::before {
+    background-color: #ffac12;
+    bottom: 0;
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -9px;
+    width: $highlight-element-size;
+  }
 
   &:not(:last-of-type) {
     border-bottom: 1px solid #868a8e;
@@ -61,13 +73,16 @@ onMounted(() => {
   }
 
   &__header {
-    align-items: center;
-    display: flex;
+    text-align: left;
   }
 
   &__images {
     display: flex;
     gap: 2px;
+  }
+
+  &__name {
+    text-decoration: underline;
   }
 
   &__text {

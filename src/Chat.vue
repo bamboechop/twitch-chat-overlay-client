@@ -41,7 +41,7 @@ import {
   SubUserstate,
   TimeoutUserstate
 } from "tmi.js";
-import { getUserIdByUserName, getUserImageByUserId } from "./common/helpers/twitch-message.helper.ts";
+import { getUserIdByUserName, getUserImageByUserId, parsePlan } from "./common/helpers/twitch-message.helper.ts";
 
 const broadcaster = {
   id: import.meta.env.VITE_TWITCH_BROADCASTER_ID,
@@ -261,7 +261,6 @@ onMounted(async () => {
 
     client.on('resub', async (_channel: string, _username: string, months: number, message: string, userstate: SubUserstate, _methods: SubMethods) => {
       const {
-        badges: userBadges,
         color,
         'display-name': displayName,
         emotes,
@@ -283,20 +282,18 @@ onMounted(async () => {
       }
 
       messages.value.push({
-        availableBadges,
         color,
+        cumulativeMonths: subCumulativeMonthsString,
         displayName,
         emotes,
         id,
         months,
         msgId,
         msgType: 'resub',
+        plan: parsePlan(subPlanString),
         show: true,
-        subCumulativeMonthsString,
-        subPlanString,
         text: message,
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
-        userBadges,
         userId,
         userImage,
         userName,
