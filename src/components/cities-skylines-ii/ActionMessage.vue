@@ -180,17 +180,15 @@ onMounted(() => {
   }
 }
 
-// TODO think about displaying a /me instead of the red triangle
 .action-message--me::before {
-  content: '';
+  bottom: 8px;
+  content: '/me';
+  color: #47515c;
+  font-size: 28px;
+  opacity: .5;
+  left: 8px;
   position: absolute;
-  border-width: 70px 0 0 70px;
-  border-color: transparent transparent transparent #ff4532;
-  bottom: 0;
-  border-style: solid;
-  left: 0;
-  border-bottom-left-radius: 5px;
-  }
+}
 
 .action-message--highlighted {
   position: relative;
