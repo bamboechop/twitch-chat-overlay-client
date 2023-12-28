@@ -1,6 +1,15 @@
 <template>
   <li class="raid-message">
-    <span class="raid-message__name">{{ userName }}</span> is raiding with {{ viewerCount }} viewers!
+    <header class="raid-message__header">
+      <span class="raid-message__name">{{ userName }}</span> raidet uns mit {{ viewerCount }} Zusehern!
+    </header>
+    <main>
+      Vielen Dank, wie war dein Stream?
+      <img
+          alt="bamboe1LOVE"
+          class="raid-message__emote"
+          src="/bamboe1LOVE.png" />
+    </main>
   </li>
 </template>
 
@@ -35,18 +44,13 @@ defineProps<IRaid>();
     width: $highlight-element-size;
   }
 
-  &__name {
-    position: relative;
-    text-decoration: underline;
+  &__emote {
+    max-height: $emote-size;
+    max-width: $emote-size;
+  }
 
-    &::before {
-      background-color: #000;
-      bottom: -2px;
-      content: '';
-      height: 1px;
-      position: absolute;
-      width: 100%;
-    }
+  &__name {
+    text-decoration: underline;
   }
 }
 </style>
