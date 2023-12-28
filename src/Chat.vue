@@ -283,7 +283,7 @@ onMounted(async () => {
 
       messages.value.push({
         color,
-        cumulativeMonths: subCumulativeMonthsString,
+        cumulativeMonths: parseInt(subCumulativeMonthsString as string, 10),
         displayName,
         emotes,
         id,
@@ -364,7 +364,6 @@ onMounted(async () => {
       console.log('subscription', { _channel, username, message, userstate, methods });
 
       const {
-        badges: userBadges,
         color,
         'display-name': displayName,
         emotes,
@@ -386,7 +385,6 @@ onMounted(async () => {
       }
 
       messages.value.push({
-        availableBadges,
         color,
         displayName,
         emotes,
@@ -395,10 +393,8 @@ onMounted(async () => {
         msgType: 'subscription',
         show: true,
         subCumulativeMonthsString,
-        subPlanString,
-        text: message,
+        plan: parsePlan(subPlanString),
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
-        userBadges,
         userId,
         userImage,
         userName,

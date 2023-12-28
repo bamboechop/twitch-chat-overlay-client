@@ -4,7 +4,7 @@
     <template v-if="displayName?.toLowerCase() !== userName?.toLowerCase()">
       ({{ userName }})
     </template>
-    hat soeben ein {{ subPlanString }} Abonnement abgeschlossen! Dankeschön!
+    hat soeben ein Stufe {{ plan }} Abonnement abgeschlossen! Dankeschön!
     <img
       alt="bamboe1LOVE"
       class="subscription-message__emote"
@@ -23,10 +23,25 @@ defineProps<ISubscription>();
 
 .subscription-message {
   color: #000;
-  display: flex;
-  justify-content: start;
+  padding-right: calc(2px + #{$highlight-element-size});
+  position: relative;
   text-align: left;
   width: 100%;
+
+  &::before {
+    background-color: #ffac12;
+    bottom: 0;
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -9px;
+    width: $highlight-element-size;
+  }
+
+  &:not(:last-of-type) {
+    border-bottom: 1px solid #868a8e;
+    box-shadow: 0 1px 0 #fff;
+  }
 
   &__emote {
     max-height: $emote-size;
