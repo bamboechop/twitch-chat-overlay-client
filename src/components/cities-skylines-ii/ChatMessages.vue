@@ -32,7 +32,7 @@
           </template>
           <template v-if="message.msgType === 'subscription'">
             <Transition appear>
-              subscription message
+              <SubscriptionMessage v-bind="message" />
             </Transition>
           </template>
         </template>
@@ -60,6 +60,7 @@ import { TMessage } from "../../common/types/index.type.ts";
 import RaidMessage from "./RaidMessage.vue";
 import ActionMessage from "./ActionMessage.vue";
 import ResubMessage from "./ResubMessage.vue";
+import SubscriptionMessage from "./SubscriptionMessage.vue";
 
 const props = defineProps<{ loading: boolean; messages: TMessage[]; }>();
 const { messages } = toRefs(props);
