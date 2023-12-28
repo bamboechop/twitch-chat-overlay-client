@@ -17,7 +17,7 @@
         <span class="chat-message__name">
           {{ displayName }}
           <template v-if="displayName?.toLowerCase() !== userName?.toLowerCase()">
-            ({{ userName }})
+            <span class="chat-message__name chat-message__name--readable">({{ userName }})</span>
           </template>
         </span>
         <span class="chat-message__timestamp">{{ humanReadableTimestamp }}</span>
@@ -153,6 +153,7 @@
     }
 
     &__timestamp {
+      align-self: start;
       font-size: 16px;
       margin: 0 0 2px auto;
     }

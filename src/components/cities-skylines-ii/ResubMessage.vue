@@ -1,30 +1,25 @@
 <template>
-  <li
-    class="action-message"
-    :class="messageTypeClass">
-    <div class="action-message__images">
+  <li class="resub-message">
+    <div class="resub-message__images">
       <img
         :alt="displayName"
-        class="action-message__avatar"
+        class="resub-message__avatar"
         :src="userImage" />
-      <template v-for="badge of userBadges">
-        <img
-          :alt="badge.description"
-          class="action-message__badge"
-          :src="badge.imageUrl" />
-      </template>
     </div>
-    <div class="action-message__content-grid">
-      <header class="action-message__header">
-        <span class="action-message__name">
+    <div class="resub-message__content-grid">
+      <header class="resub-message__header">
+        <span class="resub-message__name">
           {{ displayName }}
           <template v-if="displayName?.toLowerCase() !== userName?.toLowerCase()">
-            <span class="action-message__name action-message__name--readable">({{ userName }})</span>
+            <span class="resub-message__name resub-message__name--readable">({{ userName }})</span>
           </template>
         </span>
-        <span class="action-message__timestamp">{{ humanReadableTimestamp }}</span>
+        <span class="resub-message__timestamp">{{ humanReadableTimestamp }}</span>
       </header>
-      <main class="action-message__text">
+      <main class="resub-message__text">
+        <p class="resub-message__duration">
+          ist seit {{ months }} Monaten mit einem Stufe {{ plan }} Abonnement dabei!
+        </p>
         <template v-for="part of messageParts">
           <template v-if="part.type === 'text'">
             <span>{{ part.value }}</span>
@@ -32,7 +27,7 @@
           <template v-if="part.type === 'emote'">
             <img
               :alt="part.raw"
-              class="action-message__emote"
+              class="resub-message__emote"
               :src="part.value" />
           </template>
         </template>
@@ -47,43 +42,19 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, toRefs } from "vue";
-import { IAction, IBadge } from "../../common/interfaces/index.interface.ts";
-import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
+import { IResub } from "../../common/interfaces/index.interface.ts";
 import MessageInteraction from "./MessageInteraction.vue";
+import { onMounted, ref } from "vue";
+import { parseMessage } from "../../common/helpers/twitch-message.helper.ts";
 
-const props = defineProps<IAction>();
-const { msgId, msgType } = toRefs(props);
+const props = defineProps<IResub>();
 
 const audioPlayer = ref<HTMLAudioElement>();
 const humanReadableTimestamp = ref('');
-const isMeMessage = ref(false);
-const messageParts = ref<Record<string, string | undefined>[]>([]);
-const userBadges = ref<IBadge[]>([]);
-
-const messageTypeClass = computed(() => {
-  if(!msgType.value) {
-    return;
-  }
-  const classes = [];
-  if(msgId.value === 'highlighted-message') {
-    classes.push(`action-message--highlighted`);
-  } else if(isMeMessage.value) {
-    classes.push(`action-message--me`);
-  }
-  return classes.join(' ');
-});
+const messageParts = ref<Record<string, any>[]>([]);
 
 onMounted(() => {
   messageParts.value = parseMessage(props.emotes, props.text);
-
-  if(props.userName) {
-    isMeMessage.value = !(['pokemoncommunitygame'].includes(props.userName.toLowerCase()));
-  }
-
-  if(props.userBadges) {
-    userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
-  }
 
   const parsedTimestamp = new Date(props.timestamp ?? Date.now());
   let hours = parsedTimestamp.getHours();
@@ -97,7 +68,7 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import '../../styles/cities-skylines-ii.variables';
 
-.action-message {
+.resub-message {
   background-color: $background-color;
   border-radius: 5px;
   column-gap: 15px;
@@ -107,6 +78,17 @@ onMounted(() => {
   padding: 13px 14px 15px 14px;
   position: relative;
   width: calc(450px - 14px - 14px); // desired width minus 2*padding
+
+  &::before {
+    content: '';
+    position: absolute;
+    border-width: 70px 0 0 70px;
+    border-color: transparent transparent transparent #ffac12;
+    bottom: 0;
+    border-style: solid;
+    left: 0;
+    border-bottom-left-radius: 5px;
+  }
 
   &:last-of-type::after {
     border-bottom: $triangle-short-side solid transparent;
@@ -131,6 +113,12 @@ onMounted(() => {
     display: grid;
     grid-template-rows: repeat(3, min-content);
     row-gap: 12px;
+  }
+
+  &__duration {
+    font-size: 18px;
+    font-style: italic;
+    margin: -12px 0 0 0;
   }
 
   &__emote {
@@ -177,33 +165,6 @@ onMounted(() => {
     align-self: start;
     font-size: 16px;
     margin: 0 0 2px auto;
-  }
-}
-
-// TODO think about displaying a /me instead of the red triangle
-.action-message--me::before {
-  content: '';
-  position: absolute;
-  border-width: 70px 0 0 70px;
-  border-color: transparent transparent transparent #ff4532;
-  bottom: 0;
-  border-style: solid;
-  left: 0;
-  border-bottom-left-radius: 5px;
-  }
-
-.action-message--highlighted {
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    border-width: 70px 0 0 70px;
-    border-color: transparent transparent transparent #755ebc;
-    bottom: 0;
-    border-style: solid;
-    left: 0;
-    border-bottom-left-radius: 5px;
   }
 }
 </style>

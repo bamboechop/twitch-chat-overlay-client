@@ -22,7 +22,7 @@
           </template>
           <template v-if="message.msgType === 'resub'">
             <Transition appear>
-              resub message
+              <ResubMessage v-bind="message" />
             </Transition>
           </template>
           <template v-if="message.msgType === 'subgift'">
@@ -59,6 +59,7 @@ import Loader from "../common/Loader.vue";
 import { TMessage } from "../../common/types/index.type.ts";
 import RaidMessage from "./RaidMessage.vue";
 import ActionMessage from "./ActionMessage.vue";
+import ResubMessage from "./ResubMessage.vue";
 
 const props = defineProps<{ loading: boolean; messages: TMessage[]; }>();
 const { messages } = toRefs(props);
