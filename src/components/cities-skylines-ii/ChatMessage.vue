@@ -1,7 +1,5 @@
 <template>
-  <li
-    class="chat-message"
-    :class="[messageTypeClass]">
+  <li class="chat-message">
     <div class="chat-message__images">
       <img
           :alt="displayName"
@@ -47,43 +45,23 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, ref, toRefs } from "vue";
+  import { onMounted, ref } from "vue";
   import { IMessage } from "../../common/interfaces/index.interface.ts";
   import { parseMessage, parseUserBadges } from "../../common/helpers/twitch-message.helper.ts";
   import MessageInteraction from "./MessageInteraction.vue";
 
   const props = defineProps<IMessage>();
-  const { msgId, msgType } = toRefs(props);
 
   const audioPlayer = ref<HTMLAudioElement>();
   const humanReadableTimestamp = ref('');
-  const isMeMessage = ref(false);
   const messageParts = ref<Record<string, any>[]>([]);
   const userBadges = ref<{ description: string; id: string; imageUrl: string; title: string }[]>([]);
-
-  const messageTypeClass = computed(() => {
-    if(!msgType.value) {
-      return;
-    }
-    const classes = [`chat-message--${msgType.value.toLowerCase()}`];
-    if(isMeMessage.value) {
-      classes.push(`chat-message--me`);
-    }
-    if(msgId.value === 'highlighted-message') {
-      classes.push(`chat-message--highlighted`);
-    }
-    return classes.join(' ');
-  });
 
   onMounted(() => {
     messageParts.value = parseMessage(props.emotes, props.text);
 
     if(props.userBadges) {
       userBadges.value = parseUserBadges(props.userBadges, props.availableBadges);
-    }
-
-    if(props.userName) {
-      isMeMessage.value = !(['pokemoncommunitygame'].includes(props.userName.toLowerCase()));
     }
 
     const parsedTimestamp = new Date(props.timestamp ?? Date.now());
@@ -159,7 +137,12 @@
       color: #196a89;
       font-size: 20px;
       font-weight: 500;
+      line-height: 1.1;
       text-align: left;
+    }
+
+    &__name--readable {
+      font-size: 16px;
     }
 
     &__text {
@@ -172,38 +155,6 @@
     &__timestamp {
       font-size: 16px;
       margin: 0 0 2px auto;
-    }
-  }
-
-  .chat-message--action {
-    &:not(.chat-message--me) {
-      // TODO figure out how to highlight regular action messages (if highlighting at all)
-    }
-
-    &.chat-message--me::before {
-      content: '';
-      position: absolute;
-      border-width: 70px 0 0 70px;
-      border-color: transparent transparent transparent #ff4532;
-      bottom: 0;
-      border-style: solid;
-      left: 0;
-      border-bottom-left-radius: 5px;
-    }
-  }
-
-  .chat-message--highlighted {
-    position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      border-width: 70px 0 0 70px;
-      border-color: transparent transparent transparent #755ebc;
-      bottom: 0;
-      border-style: solid;
-      left: 0;
-      border-bottom-left-radius: 5px;
     }
   }
 </style>

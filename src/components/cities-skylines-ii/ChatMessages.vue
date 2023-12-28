@@ -12,7 +12,7 @@
           </template>
           <template v-if="message.msgType === 'chat'">
             <Transition appear>
-              chat message
+              <ChatMessage v-bind="message" />
             </Transition>
           </template>
           <template v-if="message.msgType === 'raid'">
