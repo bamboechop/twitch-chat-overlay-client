@@ -122,16 +122,14 @@
 .action-message--me {
   padding-right: 32px;
 
-  .action-message__text {
-    &::before {
-      content: '/me';
-      font-size: 18px;
-      opacity: .5;
-      right: 0;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+  &::before {
+    content: '/me';
+    font-size: 18px;
+    opacity: .5;
+    right: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 
