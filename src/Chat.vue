@@ -331,7 +331,6 @@ onMounted(async () => {
 
       messages.value.push({
         id,
-        loveEmotePath: '',
         msgId,
         msgType: 'subgift',
         recipient: {
@@ -347,7 +346,7 @@ onMounted(async () => {
           userName: senderUserName,
         },
         show: true,
-        subPlanString,
+        plan: parsePlan(subPlanString),
         timestamp: timestamp ? parseInt(timestamp, 10) : undefined,
         viewerCount: viewers.value,
       } as ISubGift);

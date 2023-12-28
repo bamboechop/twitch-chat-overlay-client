@@ -1,4 +1,5 @@
 import { Badges } from "tmi.js";
+import { TTwitchPlan } from "../types/index.type.ts";
 
 export interface ITwitchBadgeResponse {
   data: {
@@ -75,7 +76,7 @@ export interface IResub {
   months: number;
   msgId?: 'resub';
   msgType: 'resub';
-  plan?: 1 | 2 | 3 | 'Prime';
+  plan?: TTwitchPlan;
   show: boolean;
   text: string;
   timestamp?: number;
@@ -94,13 +95,12 @@ interface ISubGiftUser {
 
 export interface ISubGift {
   id?: string;
-  loveEmotePath: string;
   msgId?: 'subgift';
   msgType: 'subgift';
   recipient: ISubGiftUser;
   sender: ISubGiftUser;
   show: boolean;
-  subPlanString?: "1000" | "2000" | "3000" | "Prime"; // TODO refactor to always be "Prime" or 1, 2, 3
+  plan?: TTwitchPlan;
   timestamp?: number;
   viewerCount: number;
 }
@@ -112,7 +112,7 @@ export interface ISubscription {
   id?: string;
   msgId?: 'sub';
   msgType: 'subscription';
-  plan?: 1 | 2 | 3 | 'Prime';
+  plan?: TTwitchPlan;
   show: boolean;
   timestamp?: number;
   userId?: string;
